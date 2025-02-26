@@ -30,12 +30,39 @@
 
 import can
 
-def test_can_bus():
-    try:
-        # Assuming you're using a socketcan interface on 'can0'
-        bus = can.interface.Bus(channel='can0', interface='socketcan')
-        print("CAN bus initialized successfully!")
-    except Exception as e:
-        print(f"Error initializing CAN bus: {e}")
+bus = can.interface.Bus(channel='vcan0', interface='socketcan')
 
-test_can_bus()
+state_message = {
+    '0x00': 'LV',
+    '0x01': 'PRECHARGE',
+    '0x02': 'HV',
+    '0x03': 'DRIVE',
+    '0x05': 'STARTUP',
+    '0x81': 'DRVREQUEST',           # FAULT: Drive request from LV
+    '0x82': 'PRCHTOUT',             # FAULT: Precharge timeout
+    '0x83': 'BRKFAULT',             # FAULT: Brake not pressed
+    '0x84': 'HVDISDRIVE',           # FAULT: HV disabled while driving
+    '0x85': 'SENSFAULT',            # FAULT: Sensor discrepancy
+    '0x86': 'BSPDTRIP',             # FAULT: BSPD tripped
+    '0x87': 'CKTOPEN',              # FAULT: Shutdown Circuit Open
+    '0x88': 'UNCALIBRTD',           # FAULT: Uncalibrated
+    '0x89': 'BSPDHARD',             # FAULT: Hard BSPD
+    '0x8A': 'MCFAULT'               # FAULT: MC Fault
+}
+
+while True:
+    msg = bus.recv()
+    match hex(msg.arbitration_id):
+        case '0x500': # Speed [mph]
+            pass
+        case '0x766': # Vehicle state [LV, Precharge, HV, Drive, ...]
+            state = hex(msg.data[5])
+            pass
+        case '0x0A9': # GLV voltage [V]
+            pass
+        case '0x0A2': # Motor temperature [C]
+            pass
+        case '0x0A0': # Motor controller temperature [C]
+            pass
+        case '0x380': # Battery temperature [C] and State of Charge [%]
+            pass
