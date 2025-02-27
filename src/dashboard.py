@@ -1,10 +1,15 @@
+#!/home/frucd/projects/FE12TelemetryHost/.venv/bin/python
+
 # FE12 Dashboard
 # Display data received from Raspberry Pi telemetry host
 
 import tkinter as tk
+from canManager import FE12CANBus
 
-class Dashboard:
-    def __init__(self, master):
+class FE12Dashboard:
+    def __init__(self, master, channel, interface):
+        self.canbus = FE12CANBus(channel, interface)
+        
         self.master = master
         self.master.title("FE12 Dashboard")
         self.master.configure(bg="black")
@@ -28,6 +33,7 @@ class Dashboard:
         self.padxIn = 50
 
         self.createWidgets()
+        self.updateDashboard()
 
     def createWidgets(self):
         # Speed
@@ -66,23 +72,24 @@ class Dashboard:
         self.lblTemp = tk.Label(self.dashboard, text=f"...", font=("Trebuchet MS", 100), bg=FE_green, fg="black", anchor="center", padx=5, pady=5)
         self.lblTemp.grid(row=2, column=1, sticky="nsew", padx=(self.padxIn, self.padxOut))
 
-    def updateDashboard(self, speed, state, voltage, soc, motorTemp, motorCtrlTemp, batteryTemp):
+    def updateDashboard(self):
+        self.canbus.readMsg()
 
-        txtSpeed = str(round(speed))
-        txtState = state                    # Ask how state is determined
-        txtVoltage = f"{(voltage):.2f}"
-        txtSoC = f"{round(soc)}%"
-        txtTemp = f"{round(max(motorTemp, motorCtrlTemp, batteryTemp))}C" # Display highest temperature of motor, motor controller, battery
+        outputSpeed = str(round(self.canbus.speed))
+        outputState = self.canbus.state
+        outputVoltage = f"{(self.canbus.glvVoltage):.2f}"
+        outputSoC = f"{round(self.canbus.soc)}%"
+        outputTemp = f"{round(max(self.canbus.motorTemp, self.canbus.mcTemp, self.canbus.packTemp))}C" # Display highest temperature of motor, motor controller, battery
 
-        self.lblSpeed.config(text=txtSpeed)
-        self.lblState.config(text=txtState)
-        self.lblVoltage.config(text=txtVoltage)
-        self.lblSoC.config(text=txtSoC)
-        self.lblTemp.config(text=txtTemp)
+        self.lblSpeed.config(text=outputSpeed)
+        self.lblState.config(text=outputState)
+        self.lblVoltage.config(text=outputVoltage)
+        self.lblSoC.config(text=outputSoC)
+        self.lblTemp.config(text=outputTemp)
+
+        self.master.after(500, self.updateDashboard)
 
 root = tk.Tk()
-dashboard = Dashboard(root)
-
-dashboard.updateDashboard(58.39, "CALIBRATED", 24.25132, 25.353, 54.35, 24.43, 100.39) # Test input
+raspiDashboard = FE12Dashboard(root, 'vcan0', 'socketcan')
 
 root.mainloop()
