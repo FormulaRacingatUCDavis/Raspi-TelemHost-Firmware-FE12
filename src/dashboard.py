@@ -2,6 +2,7 @@
 
 # FE12 Dashboard
 # Display data received from Raspberry Pi telemetry host
+# Note: GUI currently does NOT display until it receives CAN data
 
 import tkinter as tk
 from canManager import FE12CANBus
@@ -32,7 +33,12 @@ class FE12Dashboard:
         self.padxOut = 100
         self.padxIn = 50
 
+        print("Creating widgets...")
+
         self.createWidgets()
+
+        print("Waiting for CAN messages...")
+
         self.updateDashboard()
 
     def createWidgets(self):
@@ -72,7 +78,8 @@ class FE12Dashboard:
         self.lblTemp = tk.Label(self.dashboard, text=f"...", font=("Trebuchet MS", 100), bg=FE_green, fg="black", anchor="center", padx=5, pady=5)
         self.lblTemp.grid(row=2, column=1, sticky="nsew", padx=(self.padxIn, self.padxOut))
 
-    def updateDashboard(self):
+    def updateDashboard(self): # Doesn't update until it receives CAN data
+
         self.canbus.readMsg()
 
         outputSpeed = str(round(self.canbus.speed))
@@ -87,9 +94,9 @@ class FE12Dashboard:
         self.lblSoC.config(text=outputSoC)
         self.lblTemp.config(text=outputTemp)
 
-        self.master.after(500, self.updateDashboard)
+        self.master.after(10, self.updateDashboard)
 
 root = tk.Tk()
-raspiDashboard = FE12Dashboard(root, 'vcan0', 'socketcan')
+raspiDashboard = FE12Dashboard(root, 'vcan0', 'socketcan') # Testing using virtual can node
 
 root.mainloop()
