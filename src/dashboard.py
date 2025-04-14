@@ -41,7 +41,6 @@ class FE12Dashboard:
         self.createWidgets()
 
         # VCU states
-
         self.LV = 0x0
         self.PRECHARGE = 0x1
         self.HV = 0x2
@@ -108,11 +107,19 @@ class FE12Dashboard:
                 self.updateTemp()
             case '0xa0':
                 self.updateTemp()
-            case '0x380':
+            case '0x380': # Byte 1
                 self.lblSoC.config(text=f"{round(self.canbus.soc)}%")
                 self.updateTemp()
 
         self.master.after(10, self.updateDashboard)
+
+# Vehicle State
+# CAN ID: 766
+# Byte 5
+
+# BMS State
+# CAN ID: 380
+# Byte 0 (?)
 
     def updateState(self):
         bmsStates = {
@@ -146,11 +153,56 @@ class FE12Dashboard:
                         case self.HV_DISABLED_WHILE_DRIVING:
                             state = 'HV OFF DRV'
                             color = 'red'
+                        case self.SENSOR_DISCREPANCY:
+                            state = 'SNSR DSCRP'
+                            color = 'red'
+                        case self.BRAKE_IMPLAUSIBLE:
+                            state = 'SHTDWN OPN'
+                            color = 'yellow'
+                        case self.UNCALIBRATED:
+                            state = 'UNCALIBRTD'
+                            color = 'yellow'
+                        case self.HARD_BSPD:
+                            state = 'HARD BSPD'
+                            color = 'red'
+                        case self.MC_FAULT:
+                            state = 'MC FAULT'
+                            color = 'red'
+                        case _:
+                            state = 'YO WTF?'
+                            color = 'red'
+                else:
+                    color = self.FE_green
+                    match self.canbus.vcuState:
+                        case self.LV:
+                            state = 'LV'
+                        case self.PRECHARGE:
+                            state = 'PRECHARGE'
+                        case self.HV:
+                            state = 'HV ENABLED'
+                        case self.DRIVE:
+                            state = 'DRIVE'
+                        case _:
+                            state = 'YO WTF?'
+                            color = 'red'
 
-
-                self.lblState.config(text=state)
+                self.lblState.config(text=state, bg=color)
         except:
             print(f"Invalid state encoding: {hex(self.canbus.vcuState)}")
+
+# Motor Temperature (motor_temp)
+# CAN ID: A2
+# Bytes 4-5
+
+# Motor Controller Temperature (mc_temp): Average of Modules A, B, and C
+# CAN ID: A0
+# Module A: Bytes 0-1
+# Module B: Bytes 2-3
+# Module C: Bytes 4-5
+
+# Battery Temperature (PACK_TEMP)
+# CAN ID: 380
+# Byte 0
 
     def updateTemp(self):
         # Display highest temperature of motor, motor controller, BMS
@@ -158,11 +210,32 @@ class FE12Dashboard:
         convMotorTemp = self.canbus.motorTemp / 10
         convMcTemp = self.canbus.motorTemp / 10
 
-        maxTemp = max(convMotorTemp, convMcTemp, self.canbus.packTemp)
+        maxTemp = -1
 
-        # if maxTemp == convMotorTemp or maxTemp == convMcTemp
+        if convMotorTemp > maxTemp:
+            if convMotorTemp < 45:
+                color = self.FE_green
+            elif convMotorTemp < 50:
+                color = 'yellow'
+            else:
+                color = 'red'
+            maxTemp = convMotorTemp
+        elif convMcTemp > maxTemp:
+            if convMcTemp < 45:
+                color = self.FE_green
+            elif convMcTemp < 50:
+                color = 'yellow'
+            else:
+                color = 'red'
+            maxTemp = convMcTemp
+        elif self.canbus.packTemp > maxTemp:
+            maxTemp = self.canbus.packTemp
 
-        self.lblTemp.config(text=f"{round(maxTemp)}C")
+        self.lblTemp.config(text=f"{round(maxTemp)}C", bg=color)
+
+# Speed: Front wheels
+# CAN ID: 500
+# Bytes 2-5
 
     def updateSpeed(self):
         # Slow down speed updates for readability
@@ -171,6 +244,10 @@ class FE12Dashboard:
         speedMPH = self.canbus.speed * 60 / wheelRadius # convert from RPM to mph
 
         self.lblSpeed.config(text=str(round(speedMPH)))
+
+# GLV Voltage (MC_INTERNAL_VOLTS)
+# CAN ID: A9
+# Bytes 6-7
 
     def updateGLV(self):
         convVoltage = self.canbus.glvVoltage / 100
@@ -183,7 +260,6 @@ class FE12Dashboard:
             color = "red"
         
         self.lblVoltage.config(text=f"{(convVoltage):.2f}", bg=color)
-
 
 root = tk.Tk()
 root.attributes('-zoomed', True)
