@@ -1,6 +1,8 @@
+#!/home/frucd/projects/FE12TelemetryHost/.venv/bin/python
+
 import can
 
-class FE12CANBus:
+class Manager:
     def __init__(self, channel, interface):
         
         print("Instantiating CAN manager...")
@@ -23,7 +25,7 @@ class FE12CANBus:
             '0xa9': self.handleGLVVoltage,  # GLV voltage [V]
             '0xa2': self.handleMotorTemp,   # Motor temperature [C]
             '0xa0': self.handleMCTemp,      # Motor controller temperature; average [C]
-            '0x380': self.handlePackTemp    # Battery temperature [C] and State of Charge [%]
+            '0x381': self.handlePackTemp    # Battery temperature [C] and State of Charge [%]
         }
 
         self.bus = can.interface.Bus(channel=channel, interface=interface)
@@ -63,7 +65,7 @@ class FE12CANBus:
 
 # BMS State
 # CAN ID: 380
-# Byte 0 (?)
+# Byte 0
 
     def handleBMSState(self, msg):
         if not self.lenError(msg, 0):
@@ -100,17 +102,10 @@ class FE12CANBus:
             )) / 3
 
 # Battery Temperature (PACK_TEMP)
-# CAN ID: 380
-# Byte 0
+# CAN ID: 381
+# Byte 0, 1
 
     def handlePackTemp(self, msg):
-        if not self.lenError(msg, 0):
-            self.packTemp = msg.data[0]
-
-# State of charge
-# CAN ID: 380
-# Byte 1
-    
-    def handleSOC(self, msg):
         if not self.lenError(msg, 1):
+            self.packTemp = msg.data[0]
             self.soc = msg.data[1]

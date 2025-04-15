@@ -4,16 +4,16 @@
 # Display data received from Raspberry Pi telemetry host
 
 import tkinter as tk
-from canManager import FE12CANBus
+from canManager import Manager
 
 class FE12Dashboard:
-    def __init__(self, master, channel, interface):
+    def __init__(self, channel, interface):
 
         print("Opening up dashboard...")
 
-        self.canbus = FE12CANBus(channel, interface)
+        self.manager = Manager(channel, interface)
         
-        self.master = master
+        self.master = tk.Tk()
         self.master.title("FE12 Dashboard")
         self.master.configure(bg="black")
 
@@ -57,6 +57,11 @@ class FE12Dashboard:
         self.HARD_BSPD = 0x89
         self.MC_FAULT = 0x8a
 
+        self.master.attributes('-zoomed', True)
+
+        self.master.after(500, self.updateDashboard) # Needs time to fully load the GUI
+        self.master.mainloop()
+
     def createWidgets(self):
 
         # Speed
@@ -68,7 +73,7 @@ class FE12Dashboard:
         # Vehicle state
         self.headerState = tk.Label(self.dashboard, text=f"STATE:", font=("Trebuchet MS", self.headerFontSize), bg="black", fg="yellow", anchor="w", pady=5)
         self.headerState.grid(row=3, column=0, sticky="nsew", padx=(self.padxOut, 0))
-        self.lblState = tk.Label(self.dashboard, text=f"...", font=("Trebuchet MS", 35), bg="yellow", fg="black", anchor="center", padx=5, pady=5)
+        self.lblState = tk.Label(self.dashboard, text=f"STARTUP", font=("Trebuchet MS", 35), bg="yellow", fg="black", anchor="center", padx=5, pady=5)
         self.lblState.grid(row=4, column=0, sticky="nsew", padx=(self.padxOut, 0))
 
         # Column Divider
@@ -94,9 +99,9 @@ class FE12Dashboard:
 
         print("Updating dashboard...")
 
-        self.canbus.readMsg()
+        self.manager.readMsg()
         
-        match self.canbus.canID:
+        match self.manager.canID:
             case '0x500':
                 self.updateSpeed()
             case '0x766':
@@ -108,7 +113,7 @@ class FE12Dashboard:
             case '0xa0':
                 self.updateTemp()
             case '0x380': # Byte 1
-                self.lblSoC.config(text=f"{round(self.canbus.soc)}%")
+                self.lblSoC.config(text=f"{round(self.manager.soc)}%")
                 self.updateTemp()
 
         self.master.after(10, self.updateDashboard)
@@ -119,7 +124,7 @@ class FE12Dashboard:
 
 # BMS State
 # CAN ID: 380
-# Byte 0 (?)
+# Byte 0
 
     def updateState(self):
         bmsStates = {
@@ -132,15 +137,12 @@ class FE12Dashboard:
         }
 
         try:
-            if hex(self.canbus.bmsState) in bmsStates: # Prioritize BMS faults over VCU faults
-                state = bmsStates[hex(self.canbus.vcuState)]
+            if hex(self.manager.bmsState) in bmsStates: # Prioritize BMS faults over VCU faults
+                state = bmsStates[hex(self.manager.vcuState)]
                 self.lblState.config(text=state, bg="red")
             else:
-                if self.canbus.vcuState & 0x80:
-                    match self.canbus.vcuState:
-                        # case STARTUP:
-                        #     state = 'STARTUP'
-                        #     color = 'yellow'
+                if self.manager.vcuState & 0x80:
+                    match self.manager.vcuState:
                         case self.DRIVE_REQUEST_FROM_LV:
                             state = 'DRV FRM LV'
                             color = 'red'
@@ -173,7 +175,7 @@ class FE12Dashboard:
                             color = 'red'
                 else:
                     color = self.FE_green
-                    match self.canbus.vcuState:
+                    match self.manager.vcuState:
                         case self.LV:
                             state = 'LV'
                         case self.PRECHARGE:
@@ -188,7 +190,7 @@ class FE12Dashboard:
 
                 self.lblState.config(text=state, bg=color)
         except:
-            print(f"Invalid state encoding: {hex(self.canbus.vcuState)}")
+            print(f"Invalid state encoding: {hex(self.manager.vcuState)}")
 
 # Motor Temperature (motor_temp)
 # CAN ID: A2
@@ -207,8 +209,8 @@ class FE12Dashboard:
     def updateTemp(self):
         # Display highest temperature of motor, motor controller, BMS
 
-        convMotorTemp = self.canbus.motorTemp / 10
-        convMcTemp = self.canbus.motorTemp / 10
+        convMotorTemp = self.manager.motorTemp / 10
+        convMcTemp = self.manager.motorTemp / 10
 
         maxTemp = -1
 
@@ -228,8 +230,8 @@ class FE12Dashboard:
             else:
                 color = 'red'
             maxTemp = convMcTemp
-        elif self.canbus.packTemp > maxTemp:
-            maxTemp = self.canbus.packTemp
+        elif self.manager.packTemp > maxTemp:
+            maxTemp = self.manager.packTemp
 
         self.lblTemp.config(text=f"{round(maxTemp)}C", bg=color)
 
@@ -241,7 +243,7 @@ class FE12Dashboard:
         # Slow down speed updates for readability
 
         wheelRadius = 1302 # double-check
-        speedMPH = self.canbus.speed * 60 / wheelRadius # convert from RPM to mph
+        speedMPH = self.manager.speed * 60 / wheelRadius # convert from RPM to mph
 
         self.lblSpeed.config(text=str(round(speedMPH)))
 
@@ -250,7 +252,7 @@ class FE12Dashboard:
 # Bytes 6-7
 
     def updateGLV(self):
-        convVoltage = self.canbus.glvVoltage / 100
+        convVoltage = self.manager.glvVoltage / 100
 
         if convVoltage > 10:
             color = self.FE_green
@@ -260,10 +262,3 @@ class FE12Dashboard:
             color = "red"
         
         self.lblVoltage.config(text=f"{(convVoltage):.2f}", bg=color)
-
-root = tk.Tk()
-root.attributes('-zoomed', True)
-raspiDashboard = FE12Dashboard(root, 'vcan0', 'socketcan')
-
-root.after(500, raspiDashboard.updateDashboard) # Needs time to fully load the GUI
-root.mainloop()
