@@ -242,8 +242,10 @@ class FE12Dashboard:
     def updateSpeed(self):
         # Slow down speed updates for readability
 
-        wheelRadius = 1302 # double-check
-        speedMPH = self.manager.speed * 60 / wheelRadius # convert from RPM to mph
+        wheelRPM = self.manager.speed
+        circumference = 50.2654 # Radius = 8 in
+
+        speedMPH = wheelRPM * circumference * 60 / 63360  # convert from RPM to mph
 
         self.lblSpeed.config(text=str(round(speedMPH)))
 

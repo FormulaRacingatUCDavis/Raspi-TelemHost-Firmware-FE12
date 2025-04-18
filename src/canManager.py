@@ -53,7 +53,7 @@ class Manager:
 
     def handleSpeed(self, msg):
         if not self.lenError(msg, 3):
-            self.speed = int.from_bytes(msg.data[2:6], "big")
+            self.speed = int.from_bytes(msg.data[2:4], "big")
 
 # Vehicle State
 # CAN ID: 766
