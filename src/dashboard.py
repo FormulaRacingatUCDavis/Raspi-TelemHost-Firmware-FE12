@@ -4,14 +4,14 @@
 # Display data received from Raspberry Pi telemetry host
 
 import tkinter as tk
-from canManager import Manager
+from canManager import FE12_CAN_Manager
 
 class FE12Dashboard:
     def __init__(self, channel, interface):
 
         print("Opening up dashboard...")
 
-        self.manager = Manager(channel, interface)
+        self.manager = FE12_CAN_Manager(channel, interface)
         
         self.master = tk.Tk()
         self.master.title("FE12 Dashboard")
@@ -128,17 +128,17 @@ class FE12Dashboard:
 
     def updateState(self):
         bmsStates = {
-            '0x4': 'BMS TEMP',
-            '0x80': 'SPI FAULT',
-            '0x8': 'OVERVOLT',
-            '0x10': 'UNDERVOLT',
-            '0x20': 'OPEN WIRE',
-            '0x40': 'MISMATCH'
+            0x4: 'BMS TEMP',
+            0x80: 'SPI FAULT',
+            0x8: 'OVERVOLT',
+            0x10: 'UNDERVOLT',
+            0x20: 'OPEN WIRE',
+            0x40: 'MISMATCH'
         }
 
         try:
-            if hex(self.manager.bmsState) in bmsStates: # Prioritize BMS faults over VCU faults
-                state = bmsStates[hex(self.manager.vcuState)]
+            if self.manager.bmsState in bmsStates: # Prioritize BMS faults over VCU faults
+                state = bmsStates[self.manager.vcuState]
                 self.lblState.config(text=state, bg="red")
             else:
                 if self.manager.vcuState & 0x80:
@@ -243,9 +243,9 @@ class FE12Dashboard:
         # Slow down speed updates for readability
 
         wheelRPM = self.manager.speed
-        circumference = 50.2654 # Radius = 8 in
+        circIn = 50.2654 # Radius = 8 in
 
-        speedMPH = wheelRPM * circumference * 60 / 63360  # convert from RPM to mph
+        speedMPH = wheelRPM * circIn * 60 / 63360  # convert from RPM to mph
 
         self.lblSpeed.config(text=str(round(speedMPH)))
 
