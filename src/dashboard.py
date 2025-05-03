@@ -1,266 +1,199 @@
 #!/home/frucd/projects/FE12TelemetryHost/.venv/bin/python
 
 # FE12 Dashboard
-# Display data received from Raspberry Pi telemetry host
+# Display data received through Raspberry Pi telemetry host
 
 import tkinter as tk
-from canManager import Manager
 
 class FE12Dashboard:
-    def __init__(self, channel, interface):
+    def __init__(self):
 
-        print("Opening up dashboard...")
-
-        self.manager = Manager(channel, interface)
-        
         self.master = tk.Tk()
-        self.master.title("FE12 Dashboard")
-        self.master.configure(bg="black")
 
-        self.dashboard = tk.Frame(self.master, bg="black")
-        self.dashboard.pack(fill="both", expand=True, pady=20)
+        # Dashboard metrics
+        self.bms_state = None
+        self.vcu_state = 'STARTUP'
+        self.motor_temp = -1
+        self.mc_temp = -1
+        self.pack_temp = -1
+        self.speed_RPM = None
+        self.glv_voltage = None
+        self.soc = None
 
-        self.dashboard.grid_rowconfigure(0, weight=5, uniform="equal")  # Header
+        # Widget placeholders
+        self.lbl_speed = None
+        self.header_speed = None
+        self.lbl_state = None
+        self.header_state = None
+        self.lbl_voltage = None
+        self.header_voltage = None
+        self.lbl_soc = None
+        self.header_soc = None
+        self.lbl_temp = None
+        self.col_div = None
 
-        self.dashboard.grid_rowconfigure(1, weight=10, uniform="equal") 
-        self.dashboard.grid_rowconfigure(2, weight=10, uniform="equal")
+    def create_widgets(self):
 
-        self.dashboard.grid_rowconfigure(3, weight=6, uniform="equal")  # Header
-        self.dashboard.grid_rowconfigure(4, weight=20, uniform="equal")
+        self.master.title('FE12 Dashboard')
+        self.master.configure(bg='black')
+
+        dashboard = tk.Frame(self.master, bg='black')
+        dashboard.pack(fill='both', expand=True, pady=20)
+
+        dashboard.grid_rowconfigure(0, weight=5, uniform='equal')  # Header
+
+        dashboard.grid_rowconfigure(1, weight=10, uniform='equal') 
+        dashboard.grid_rowconfigure(2, weight=10, uniform='equal')
+
+        dashboard.grid_rowconfigure(3, weight=6, uniform='equal')  # Header
+        dashboard.grid_rowconfigure(4, weight=20, uniform='equal')
         
-        self.dashboard.grid_columnconfigure(0, weight=15, uniform="equal")
-        self.dashboard.grid_columnconfigure(1, weight=1, uniform="equal") # Column divider
-        self.dashboard.grid_columnconfigure(2, weight=15, uniform="equal")
+        dashboard.grid_columnconfigure(0, weight=15, uniform='equal')
+        dashboard.grid_columnconfigure(1, weight=1, uniform='equal') # Column divider
+        dashboard.grid_columnconfigure(2, weight=15, uniform='equal')
 
-        self.padxOut = 10
+        padx_out = 10
 
-        self.headerFontSize = 20
-
-        self.FE_green = "#20e848"
-
-        self.createWidgets()
-
-        # VCU states
-        self.LV = 0x0
-        self.PRECHARGE = 0x1
-        self.HV = 0x2
-        self.DRIVE = 0x3
-        self.STARTUP = 0x5
-        self.DRIVE_REQUEST_FROM_LV = 0x81
-        self.PRECHARGE_TIMEOUT = 0x82
-        self.BRAKE_NOT_PRESSED = 0x83
-        self.HV_DISABLED_WHILE_DRIVING = 0x84
-        self.SENSOR_DISCREPANCY = 0x85
-        self.BRAKE_IMPLAUSIBLE = 0x86
-        self.SHUTDOWN_CIRCUIT_OPEN = 0x87
-        self.UNCALIBRATED = 0x88
-        self.HARD_BSPD = 0x89
-        self.MC_FAULT = 0x8a
-
-        self.master.attributes('-zoomed', True)
-
-        self.master.after(500, self.updateDashboard) # Needs time to fully load the GUI
-        self.master.mainloop()
-
-    def createWidgets(self):
+        header_font_size = 20
 
         # Speed
-        self.headerSpeed = tk.Label(self.dashboard, text=f"MPH", font=("Trebuchet MS", self.headerFontSize), bg="black", fg="yellow", anchor="s", padx=5, pady=5)
-        self.headerSpeed.grid(row=0, column=0, sticky="nsew", padx=(self.padxOut, 0))
-        self.lblSpeed = tk.Label(self.dashboard, text=f"...", font=("Trebuchet MS", 75), bg="#ac75d9", fg="black", anchor="center", padx=5, pady=5)
-        self.lblSpeed.grid(row=1, column=0, sticky="nsew", rowspan=2, padx=(self.padxOut, 0))
+        self.header_speed = tk.Label(dashboard, text=f'MPH', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
+        self.header_speed.grid(row=0, column=0, sticky='nsew', padx=(padx_out, 0))
+        self.lbl_speed = tk.Label(dashboard, font=('Trebuchet MS', 75), fg='black', anchor='center', padx=5, pady=5)
+        self.lbl_speed.grid(row=1, column=0, sticky='nsew', rowspan=2, padx=(padx_out, 0))
 
         # Vehicle state
-        self.headerState = tk.Label(self.dashboard, text=f"STATE:", font=("Trebuchet MS", self.headerFontSize), bg="black", fg="yellow", anchor="w", pady=5)
-        self.headerState.grid(row=3, column=0, sticky="nsew", padx=(self.padxOut, 0))
-        self.lblState = tk.Label(self.dashboard, text=f"STARTUP", font=("Trebuchet MS", 35), bg="yellow", fg="black", anchor="center", padx=5, pady=5)
-        self.lblState.grid(row=4, column=0, sticky="nsew", padx=(self.padxOut, 0))
+        self.header_state = tk.Label(dashboard, text=f'STATE:', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='w', pady=5)
+        self.header_state.grid(row=3, column=0, sticky='nsew', padx=(padx_out, 0))
+        self.lbl_state = tk.Label(dashboard, text=self.vcu_state, font=('Trebuchet MS', 35), fg='black', anchor='center', padx=5, pady=5)
+        self.lbl_state.grid(row=4, column=0, sticky='nsew', padx=(padx_out, 0))
 
         # Column Divider
-        self.colDivider = tk.Frame(self.dashboard, bg ="black")
-        self.colDivider.grid(column= 1, sticky="nsew", rowspan=2)
+        self.col_div = tk.Frame(dashboard, bg ='black')
+        self.col_div.grid(column= 1, sticky='nsew', rowspan=2)
 
         # GLV Voltage
-        self.headerVoltage = tk.Label(self.dashboard, text=f"GLV V", font=("Trebuchet MS", self.headerFontSize), bg="black", fg="yellow", anchor="s", padx=5, pady=5)
-        self.headerVoltage.grid(row=3, column=2, sticky="nsew", padx=(0, self.padxOut))
-        self.lblVoltage = tk.Label(self.dashboard, text=f"...", font=("Trebuchet MS", 50), bg=self.FE_green, fg="black", anchor="center", padx=5, pady=5)
-        self.lblVoltage.grid(row=4, column=2, sticky="nsew", padx=(0, self.padxOut))
+        self.header_voltage = tk.Label(dashboard, text=f'GLV V', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
+        self.header_voltage.grid(row=3, column=2, sticky='nsew', padx=(0, padx_out))
+        self.lbl_voltage = tk.Label(dashboard, font=('Trebuchet MS', 50), fg='black', anchor='center', padx=5, pady=5)
+        self.lbl_voltage.grid(row=4, column=2, sticky='nsew', padx=(0, padx_out))
 
         # State of Charge
-        self.headerSoC = tk.Label(self.dashboard, text=f"PACK SOCIT", font=("Trebuchet MS", self.headerFontSize), bg="black", fg="yellow", anchor="s", padx=5, pady=5)
-        self.headerSoC.grid(row=0, column=2, sticky="nsew", padx=(0, self.padxOut))
-        self.lblSoC = tk.Label(self.dashboard, text=f"...", font=("Trebuchet MS", 50), bg="red", fg="black", anchor="center", padx=5, pady=5)
+        self.header_soc = tk.Label(dashboard, text=f'PACK SOCIT', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
+        self.header_soc.grid(row=0, column=2, sticky='nsew', padx=(0, padx_out))
+        self.lbl_soc = tk.Label(dashboard, font=('Trebuchet MS', 50), anchor='center', padx=5, pady=5)
         # Temperature
-        self.lblSoC.grid(row=1, column=2, sticky="nsew", padx=(0, self.padxOut), pady=(0,5))
-        self.lblTemp = tk.Label(self.dashboard, text=f"...", font=("Trebuchet MS", 50), bg=self.FE_green, fg="black", anchor="center", padx=5, pady=5)
-        self.lblTemp.grid(row=2, column=2, sticky="nsew", padx=(0, self.padxOut))
+        self.lbl_soc.grid(row=1, column=2, sticky='nsew', padx=(0, padx_out), pady=(0,5))
+        self.lbl_temp = tk.Label(dashboard, font=('Trebuchet MS', 50), anchor='center', padx=5, pady=5)
+        self.lbl_temp.grid(row=2, column=2, sticky='nsew', padx=(0, padx_out))
 
-    def updateDashboard(self):
+    def update_state(self, message_name, data):
+        # Prioritize BMS faults over VCU faults
 
-        print("Updating dashboard...")
+        if message_name == 'Dashboard_Vehicle_State':
+            self.vcu_state = data['State']
+        else:
+            self.bms_state = data['State']
 
-        self.manager.readMsg()
-        
-        match self.manager.canID:
-            case '0x500':
-                self.updateSpeed()
-            case '0x766':
-                self.updateState()
-            case '0xa9':
-                self.updateGLV()
-            case '0xa2':
-                self.updateTemp()
-            case '0xa0':
-                self.updateTemp()
-            case '0x380': # Byte 1
-                self.lblSoC.config(text=f"{round(self.manager.soc)}%")
-                self.updateTemp()
-
-        self.master.after(10, self.updateDashboard)
-
-# Vehicle State
-# CAN ID: 766
-# Byte 5
-
-# BMS State
-# CAN ID: 380
-# Byte 0
-
-    def updateState(self):
-        bmsStates = {
-            '0x4': 'BMS TEMP',
-            '0x80': 'SPI FAULT',
-            '0x8': 'OVERVOLT',
-            '0x10': 'UNDERVOLT',
-            '0x20': 'OPEN WIRE',
-            '0x40': 'MISMATCH'
-        }
-
-        try:
-            if hex(self.manager.bmsState) in bmsStates: # Prioritize BMS faults over VCU faults
-                state = bmsStates[hex(self.manager.vcuState)]
-                self.lblState.config(text=state, bg="red")
+        if self.bms_state != 'NO_ERROR' and self.bms_state != None:
+            if isinstance(self.bms_state, int):
+                state = 'YO WTF?'
+                color = 'red'
             else:
-                if self.manager.vcuState & 0x80:
-                    match self.manager.vcuState:
-                        case self.DRIVE_REQUEST_FROM_LV:
-                            state = 'DRV FRM LV'
-                            color = 'red'
-                        case self.PRECHARGE_TIMEOUT:
-                            state = 'PRE TM OUT'
-                            color = 'red'
-                        case self.BRAKE_NOT_PRESSED:
-                            state = 'BR NOT PRS'
-                            color = 'red'
-                        case self.HV_DISABLED_WHILE_DRIVING:
-                            state = 'HV OFF DRV'
-                            color = 'red'
-                        case self.SENSOR_DISCREPANCY:
-                            state = 'SNSR DSCRP'
-                            color = 'red'
-                        case self.BRAKE_IMPLAUSIBLE:
-                            state = 'SHTDWN OPN'
-                            color = 'yellow'
-                        case self.UNCALIBRATED:
-                            state = 'UNCALIBRTD'
-                            color = 'yellow'
-                        case self.HARD_BSPD:
-                            state = 'HARD BSPD'
-                            color = 'red'
-                        case self.MC_FAULT:
-                            state = 'MC FAULT'
-                            color = 'red'
-                        case _:
-                            state = 'YO WTF?'
-                            color = 'red'
-                else:
-                    color = self.FE_green
-                    match self.manager.vcuState:
-                        case self.LV:
-                            state = 'LV'
-                        case self.PRECHARGE:
-                            state = 'PRECHARGE'
-                        case self.HV:
-                            state = 'HV ENABLED'
-                        case self.DRIVE:
-                            state = 'DRIVE'
-                        case _:
-                            state = 'YO WTF?'
-                            color = 'red'
+                state = str(self.bms_state).replace('_', ' ')
+                color = 'red'
+        else:
+            if isinstance(self.vcu_state, int):
+                state = 'YO WTF?'
+                color = 'red'
+            else:
+                state = str(self.vcu_state).replace('_', ' ')
+                match state:
+                    case 'LV':
+                        color = 'lawn green'
+                    case 'PRECHARGE':
+                        color = 'lawn green'
+                    case 'HV ENABLED':
+                        color = 'lawn green'
+                    case 'DRIVE':
+                        color = 'lawn green'
+                    case 'STARTUP':
+                        color = 'lawn green'
+                # Fault states
+                    case 'BSPD TRIPD':
+                        color = 'yellow'
+                    case 'UNCALIBRTD':
+                        color = 'yellow'
+                    case _:
+                        color = 'red'
 
-                self.lblState.config(text=state, bg=color)
-        except:
-            print(f"Invalid state encoding: {hex(self.manager.vcuState)}")
+        self.lbl_state.config(text=state, bg=color)
 
-# Motor Temperature (motor_temp)
-# CAN ID: A2
-# Bytes 4-5
-
-# Motor Controller Temperature (mc_temp): Average of Modules A, B, and C
-# CAN ID: A0
-# Module A: Bytes 0-1
-# Module B: Bytes 2-3
-# Module C: Bytes 4-5
-
-# Battery Temperature (PACK_TEMP)
-# CAN ID: 380
-# Byte 0
-
-    def updateTemp(self):
+    def update_temp(self, message_name, data):
         # Display highest temperature of motor, motor controller, BMS
+        
+        if message_name == 'M162_Temperature_Set_3':
+            self.motor_temp = data['INV_Motor_Temp']
+        elif message_name == 'M160_Temperature_Set_1':
+            self.mc_temp = (data['INV_Module_A_Temp'] + data['INV_Module_B_Temp'] + data['INV_Module_C_Temp']) / 3
+        else:
+            self.pack_temp = data['HI_Temp']
+            self.soc = data['SOC']
+            self.lbl_soc.config(text=f'{round(self.soc)}%', bg='red')
 
-        convMotorTemp = self.manager.motorTemp / 10
-        convMcTemp = self.manager.motorTemp / 10
+        max_temp = -4000
+        color = 'gray'
 
-        maxTemp = -1
-
-        if convMotorTemp > maxTemp:
-            if convMotorTemp < 45:
-                color = self.FE_green
-            elif convMotorTemp < 50:
+        if self.motor_temp > max_temp:
+            max_temp = self.motor_temp
+            if self.motor_temp < 45:
+                color = 'lawn green'
+            elif self.motor_temp < 50:
                 color = 'yellow'
             else:
                 color = 'red'
-            maxTemp = convMotorTemp
-        elif convMcTemp > maxTemp:
-            if convMcTemp < 45:
-                color = self.FE_green
-            elif convMcTemp < 50:
+
+        if self.mc_temp > max_temp:
+            max_temp = self.mc_temp
+            if self.mc_temp < 45:
+                color = 'lawn green'
+            elif self.mc_temp < 50:
                 color = 'yellow'
             else:
                 color = 'red'
-            maxTemp = convMcTemp
-        elif self.manager.packTemp > maxTemp:
-            maxTemp = self.manager.packTemp
 
-        self.lblTemp.config(text=f"{round(maxTemp)}C", bg=color)
+        if self.pack_temp > max_temp:
+            max_temp = self.pack_temp
+            if self.pack_temp <= 30:
+                color = 'lawn green'
+            elif self.pack_temp <= 40:
+                color = 'yellow'
+            elif self.pack_temp <= 50:
+                color = 'orange'
+            else:
+                color = 'red'
 
-# Speed: Front wheels
-# CAN ID: 500
-# Bytes 2-5
+        self.lbl_temp.config(text=f'{round(max_temp)}C', bg=color)
 
-    def updateSpeed(self):
+    def update_speed(self, data):
         # Slow down speed updates for readability
 
-        wheelRPM = self.manager.speed
-        circumference = 50.2654 # Radius = 8 in
+        self.speed_RPM = data['Front_Wheel_Speed']
 
-        speedMPH = wheelRPM * circumference * 60 / 63360  # convert from RPM to mph
+        circum = 50.2655 # Radius = 8 in
+        speed_MPH = self.speed_RPM * circum * 60 / 63360
 
-        self.lblSpeed.config(text=str(round(speedMPH)))
+        self.lbl_speed.config(text=str(round(speed_MPH)), bg='dodger blue')
 
-# GLV Voltage (MC_INTERNAL_VOLTS)
-# CAN ID: A9
-# Bytes 6-7
+    def update_glv(self, data):
 
-    def updateGLV(self):
-        convVoltage = self.manager.glvVoltage / 100
+        self.glv_voltage = data['INV_Ref_Voltage_12_0']
 
-        if convVoltage > 10:
-            color = self.FE_green
-        elif convVoltage > 9:
-            color = "yellow"
+        if self.glv_voltage > 10:
+            color = 'lawn green'
+        elif self.glv_voltage > 9:
+            color = 'yellow'
         else:
-            color = "red"
+            color = 'red'
         
-        self.lblVoltage.config(text=f"{(convVoltage):.2f}", bg=color)
+        self.lbl_voltage.config(text=f'{(self.glv_voltage):.2f}', bg=color)
