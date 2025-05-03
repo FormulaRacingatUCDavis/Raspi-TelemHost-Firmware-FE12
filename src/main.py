@@ -4,11 +4,14 @@ import can
 import cantools
 import cantools.database
 import threading
+import csv
 from dashboard import FE12Dashboard
 
 bus = can.interface.Bus(channel = 'vcan0', interface = 'socketcan')
 db = cantools.database.load_file('FE12.dbc')
 dashboard = FE12Dashboard()
+
+csv = open('logs/FE12_Log.csv', 'w', newline='')
 
 def process_can():
     print("Processing CAN messages...")
