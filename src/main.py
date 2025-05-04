@@ -1,4 +1,4 @@
-#!/home/frucd/projects/FE12TelemetryHost/.venv/bin/python
+#!/home/frucd/projects/Raspi-TelemHost-Firmware-FE12/.venv/bin/python
 
 import can
 import os
@@ -17,6 +17,8 @@ project_root = os.path.dirname(os.path.dirname(__file__))
 dbc_path = os.path.join(os.path.dirname(__file__), 'FE12.dbc')
 db = cantools.database.load_file(dbc_path)
 dashboard = FE12Dashboard()
+knob_update_ts = 0
+dashboard.root.bind('<x>', lambda event: dashboard.root.destroy())
 
 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 
@@ -31,6 +33,7 @@ csv_writer.writerow(['ID', 'D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'Time
 def process_can():
     print("Processing CAN messages...\n")
 
+    global knob_update_ts
     while True:
         msg = bus.recv()
 
@@ -56,13 +59,28 @@ def process_can():
                     dashboard.root.after(0, dashboard.update_temp, message.name, data)
                 case 'Dashboard_Random_Shit':
                     dashboard.root.after(0, dashboard.update_speed, data)
+                case 'Dashboard_Knobs':
+                    dashboard.root.after(0, dashboard.update_knob, data)
+                    knob_update_ts = time.time()
                 case 'M169_Internal_Voltages':
                     dashboard.root.after(0, dashboard.update_glv, data)
             
+            if time.time() - knob_update_ts > 1 and dashboard.current_frame == dashboard.gauge_frame:
+                if dashboard.bms_error == True or dashboard.vcu_error == True:
+                    dashboard.current_frame.forget()
+                    dashboard.error_frame.pack(fill='both', expand=True)
+                    dashboard.root.update_idletasks()
+                    dashboard.current_frame = dashboard.error_frame
+                else:
+                    dashboard.current_frame.forget()
+                    dashboard.main_frame.pack(fill='both', expand=True)
+                    dashboard.root.update_idletasks()
+                    dashboard.current_frame = dashboard.main_frame
+
         except KeyError:
             print(f"Unknown CAN ID: {hex(msg.arbitration_id)}")
 
 threading.Thread(target=process_can, daemon=True).start()
 
-dashboard.root.attributes('-zoomed', True)
+dashboard.root.attributes('-fullscreen', True)
 dashboard.root.mainloop()
