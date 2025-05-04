@@ -11,8 +11,6 @@ bus = can.interface.Bus(channel = 'vcan0', interface = 'socketcan')
 db = cantools.database.load_file('FE12.dbc')
 dashboard = FE12Dashboard()
 
-csv = open('logs/FE12_Log.csv', 'w', newline='')
-
 def process_can():
     print("Processing CAN messages...")
 
@@ -24,23 +22,25 @@ def process_can():
 
             match message.name:
                 case 'Dashboard_Vehicle_State':
-                    dashboard.master.after(0, dashboard.update_state, message.name, data)
+                    dashboard.root.after(0, dashboard.update_state, message.name, data)
+                case 'PEI_BMS_Status':
+                    dashboard.root.after(0, dashboard.update_state, message.name, data)
                 case 'M160_Temperature_Set_1':
-                    dashboard.master.after(0, dashboard.update_temp, message.name, data)
+                    dashboard.root.after(0, dashboard.update_temp, message.name, data)
                 case 'M162_Temperature_Set_3':
-                    dashboard.master.after(0, dashboard.update_temp, message.name, data)
+                    dashboard.root.after(0, dashboard.update_temp, message.name, data)
                 case 'PEI_Diagnostic_BMS_Data':
-                    dashboard.master.after(0, dashboard.update_temp, message.name, data)
+                    dashboard.root.after(0, dashboard.update_temp, message.name, data)
                 case 'Dashboard_Random_Shit':
-                    dashboard.master.after(0, dashboard.update_speed, data)
+                    dashboard.root.after(0, dashboard.update_speed, data)
                 case 'M169_Internal_Voltages':
-                    dashboard.master.after(0, dashboard.update_glv, data)
+                    dashboard.root.after(0, dashboard.update_glv, data)
             
         except KeyError:
             print(f"Unknown CAN ID: {hex(msg.arbitration_id)}")
 
 threading.Thread(target=process_can, daemon=True).start()
 
-dashboard.create_widgets()
-dashboard.master.attributes('-zoomed', True)
-dashboard.master.mainloop()
+dashboard.init_main_frame()
+dashboard.root.attributes('-zoomed', True)
+dashboard.root.mainloop()
