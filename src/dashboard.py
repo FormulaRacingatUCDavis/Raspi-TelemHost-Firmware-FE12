@@ -16,7 +16,8 @@ class FE12Dashboard:
         self.motor_temp = -1
         self.mc_temp = -1
         self.pack_temp = -1
-        self.speed_RPM = None
+        self.max_temp = None
+        self.speed_MPH = None
         self.glv_voltage = None
         self.soc = None
 
@@ -63,13 +64,13 @@ class FE12Dashboard:
         # Speed
         self.header_speed = tk.Label(self.main_frame, text=f'MPH', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
         self.header_speed.grid(row=0, column=0, sticky='nsew', padx=(padx_out, 0))
-        self.lbl_speed = tk.Label(self.main_frame, font=('Trebuchet MS', 75), fg='black', anchor='center', padx=5, pady=5)
+        self.lbl_speed = tk.Label(self.main_frame, text=self.speed_MPH, font=('Trebuchet MS', 75), fg='black', anchor='center', padx=5, pady=5)
         self.lbl_speed.grid(row=1, column=0, sticky='nsew', rowspan=2, padx=(padx_out, 0))
 
         # Vehicle state
         self.header_state = tk.Label(self.main_frame, text=f'STATE:', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='w', pady=5)
         self.header_state.grid(row=3, column=0, sticky='nsew', padx=(padx_out, 0))
-        self.lbl_state = tk.Label(self.main_frame, text=self.vcu_state, font=('Trebuchet MS', 35), fg='black', anchor='center', padx=5, pady=5)
+        self.lbl_state = tk.Label(self.main_frame, text=self.vcu_state, font=('Trebuchet MS', 35), bg='lawn green', fg='black', anchor='center', padx=5, pady=5)
         self.lbl_state.grid(row=4, column=0, sticky='nsew', padx=(padx_out, 0))
 
         # Column Divider
@@ -79,16 +80,16 @@ class FE12Dashboard:
         # GLV Voltage
         self.header_voltage = tk.Label(self.main_frame, text=f'GLV V', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
         self.header_voltage.grid(row=3, column=2, sticky='nsew', padx=(0, padx_out))
-        self.lbl_voltage = tk.Label(self.main_frame, font=('Trebuchet MS', 50), fg='black', anchor='center', padx=5, pady=5)
+        self.lbl_voltage = tk.Label(self.main_frame, text=self.glv_voltage, font=('Trebuchet MS', 50), fg='black', anchor='center', padx=5, pady=5)
         self.lbl_voltage.grid(row=4, column=2, sticky='nsew', padx=(0, padx_out))
 
         # State of Charge
         self.header_soc = tk.Label(self.main_frame, text=f'PACK SOCIT', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
         self.header_soc.grid(row=0, column=2, sticky='nsew', padx=(0, padx_out))
-        self.lbl_soc = tk.Label(self.main_frame, font=('Trebuchet MS', 50), anchor='center', padx=5, pady=5)
+        self.lbl_soc = tk.Label(self.main_frame, text=self.soc, font=('Trebuchet MS', 50), anchor='center', padx=5, pady=5)
         # Temperature
         self.lbl_soc.grid(row=1, column=2, sticky='nsew', padx=(0, padx_out), pady=(0,5))
-        self.lbl_temp = tk.Label(self.main_frame, font=('Trebuchet MS', 50), anchor='center', padx=5, pady=5)
+        self.lbl_temp = tk.Label(self.main_frame, text=self.max_temp, font=('Trebuchet MS', 50), anchor='center', padx=5, pady=5)
         self.lbl_temp.grid(row=2, column=2, sticky='nsew', padx=(0, padx_out))
 
     def update_state(self, message_name, data):
@@ -154,11 +155,11 @@ class FE12Dashboard:
             self.soc = data['SOC']
             self.lbl_soc.config(text=f'{round(self.soc)}%', bg='red')
 
-        max_temp = -4000
+        self.max_temp = -4000
         color = 'gray'
 
-        if self.motor_temp > max_temp:
-            max_temp = self.motor_temp
+        if self.motor_temp > self.max_temp:
+            self.max_temp = self.motor_temp
             if self.motor_temp < 45:
                 color = 'lawn green'
             elif self.motor_temp < 50:
@@ -166,8 +167,8 @@ class FE12Dashboard:
             else:
                 color = 'red'
 
-        if self.mc_temp > max_temp:
-            max_temp = self.mc_temp
+        if self.mc_temp > self.max_temp:
+            self.max_temp = self.mc_temp
             if self.mc_temp < 45:
                 color = 'lawn green'
             elif self.mc_temp < 50:
@@ -175,8 +176,8 @@ class FE12Dashboard:
             else:
                 color = 'red'
 
-        if self.pack_temp > max_temp:
-            max_temp = self.pack_temp
+        if self.pack_temp > self.max_temp:
+            self.max_temp = self.pack_temp
             if self.pack_temp <= 30:
                 color = 'lawn green'
             elif self.pack_temp <= 40:
@@ -186,17 +187,17 @@ class FE12Dashboard:
             else:
                 color = 'red'
 
-        self.lbl_temp.config(text=f'{round(max_temp)}C', bg=color)
+        self.lbl_temp.config(text=f'{round(self.max_temp)}C', bg=color)
 
     def update_speed(self, data):
         # Slow down speed updates for readability
 
-        self.speed_RPM = data['Front_Wheel_Speed']
+        speed_RPM = data['Front_Wheel_Speed']
 
         circum = 50.2655 # Radius = 8 in
-        speed_MPH = self.speed_RPM * circum * 60 / 63360
+        self.speed_MPH = speed_RPM * circum * 60 / 63360
 
-        self.lbl_speed.config(text=str(round(speed_MPH)), bg='dodger blue')
+        self.lbl_speed.config(text=str(round(self.speed_MPH)), bg='dodger blue')
 
     def update_glv(self, data):
 

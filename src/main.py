@@ -38,15 +38,9 @@ def process_can():
             data = message.decode(msg.data)
 
             match message.name:
-                case 'Dashboard_Vehicle_State':
+                case 'Dashboard_Vehicle_State' | 'PEI_BMS_Status':
                     dashboard.root.after(0, dashboard.update_state, message.name, data)
-                case 'PEI_BMS_Status':
-                    dashboard.root.after(0, dashboard.update_state, message.name, data)
-                case 'M160_Temperature_Set_1':
-                    dashboard.root.after(0, dashboard.update_temp, message.name, data)
-                case 'M162_Temperature_Set_3':
-                    dashboard.root.after(0, dashboard.update_temp, message.name, data)
-                case 'PEI_Diagnostic_BMS_Data':
+                case 'M160_Temperature_Set_1' | 'M162_Temperature_Set_3' | 'PEI_Diagnostic_BMS_Data':
                     dashboard.root.after(0, dashboard.update_temp, message.name, data)
                 case 'Dashboard_Random_Shit':
                     dashboard.root.after(0, dashboard.update_speed, data)
