@@ -1,4 +1,4 @@
-# FE-12 Telemetry Host
-Logs CAN data from the FE-12 VCU using a Raspberry Pi 4B and displays it on a live GUI.
+# Raspberry Pi Telemetry Host (FE12)
+Displays and logs telemetry data received over CAN using a Raspberry Pi.
 
 ![DashboardScreenshot](assets/example.png)

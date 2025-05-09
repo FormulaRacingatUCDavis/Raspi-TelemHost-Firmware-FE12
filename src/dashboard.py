@@ -1,8 +1,5 @@
 #!/home/frucd/projects/FE12TelemetryHost/.venv/bin/python
 
-# FE12 Dashboard
-# Display data received through Raspberry Pi telemetry host
-
 import tkinter as tk
 
 class FE12Dashboard:
@@ -21,29 +18,10 @@ class FE12Dashboard:
         self.glv_voltage = None
         self.soc = None
 
-        # Main widget placeholders
-        self.lbl_speed = None
-        self.header_speed = None
-        self.lbl_state = None
-        self.header_state = None
-        self.lbl_voltage = None
-        self.header_voltage = None
-        self.lbl_soc = None
-        self.header_soc = None
-        self.lbl_temp = None
-        self.col_div = None
-        
-        self.main_frame = None
-        self.error_frame = None
-        self.error = False
-
-    def init_main_frame(self):
-
+        # Main frame
+        self.main_frame = tk.Frame(self.root, bg='black')
         self.root.title('FE12 Dashboard')
         self.root.configure(bg='black')
-
-        self.main_frame = tk.Frame(self.root, bg='black')
-        self.main_frame.pack(fill='both', expand=True, pady=20)
 
         self.main_frame.grid_rowconfigure(0, weight=5, uniform='equal')  # Header
 
@@ -62,35 +40,42 @@ class FE12Dashboard:
         header_font_size = 20
 
         # Speed
-        self.header_speed = tk.Label(self.main_frame, text=f'MPH', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
-        self.header_speed.grid(row=0, column=0, sticky='nsew', padx=(padx_out, 0))
+        header_speed = tk.Label(self.main_frame, text=f'MPH', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
+        header_speed.grid(row=0, column=0, sticky='nsew', padx=(padx_out, 0))
         self.lbl_speed = tk.Label(self.main_frame, text=self.speed_MPH, font=('Trebuchet MS', 75), fg='black', anchor='center', padx=5, pady=5)
         self.lbl_speed.grid(row=1, column=0, sticky='nsew', rowspan=2, padx=(padx_out, 0))
 
         # Vehicle state
-        self.header_state = tk.Label(self.main_frame, text=f'STATE:', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='w', pady=5)
-        self.header_state.grid(row=3, column=0, sticky='nsew', padx=(padx_out, 0))
+        header_state = tk.Label(self.main_frame, text=f'STATE:', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='w', pady=5)
+        header_state.grid(row=3, column=0, sticky='nsew', padx=(padx_out, 0))
         self.lbl_state = tk.Label(self.main_frame, text=self.vcu_state, font=('Trebuchet MS', 35), bg='lawn green', fg='black', anchor='center', padx=5, pady=5)
         self.lbl_state.grid(row=4, column=0, sticky='nsew', padx=(padx_out, 0))
 
         # Column Divider
-        self.col_div = tk.Frame(self.main_frame, bg ='black')
-        self.col_div.grid(column= 1, sticky='nsew', rowspan=2)
+        col_div = tk.Frame(self.main_frame, bg ='black')
+        col_div.grid(column= 1, sticky='nsew', rowspan=2)
 
         # GLV Voltage
-        self.header_voltage = tk.Label(self.main_frame, text=f'GLV V', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
-        self.header_voltage.grid(row=3, column=2, sticky='nsew', padx=(0, padx_out))
+        header_voltage = tk.Label(self.main_frame, text=f'GLV V', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
+        header_voltage.grid(row=3, column=2, sticky='nsew', padx=(0, padx_out))
         self.lbl_voltage = tk.Label(self.main_frame, text=self.glv_voltage, font=('Trebuchet MS', 50), fg='black', anchor='center', padx=5, pady=5)
         self.lbl_voltage.grid(row=4, column=2, sticky='nsew', padx=(0, padx_out))
 
         # State of Charge
-        self.header_soc = tk.Label(self.main_frame, text=f'PACK SOCIT', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
-        self.header_soc.grid(row=0, column=2, sticky='nsew', padx=(0, padx_out))
+        header_soc = tk.Label(self.main_frame, text=f'PACK SOCIT', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
+        header_soc.grid(row=0, column=2, sticky='nsew', padx=(0, padx_out))
         self.lbl_soc = tk.Label(self.main_frame, text=self.soc, font=('Trebuchet MS', 50), anchor='center', padx=5, pady=5)
         # Temperature
         self.lbl_soc.grid(row=1, column=2, sticky='nsew', padx=(0, padx_out), pady=(0,5))
         self.lbl_temp = tk.Label(self.main_frame, text=self.max_temp, font=('Trebuchet MS', 50), anchor='center', padx=5, pady=5)
         self.lbl_temp.grid(row=2, column=2, sticky='nsew', padx=(0, padx_out))
+
+        self.main_frame.pack(fill='both', expand=True, pady=20)
+        self.root.update_idletasks()
+
+        # Error frame
+        self.error_frame = tk.Label(self.root, bg='red', font=('Trebuchet MS', 125))
+        self.error = False
 
     def update_state(self, message_name, data):
 
@@ -98,13 +83,14 @@ class FE12Dashboard:
             if frame == 'main':
                 if self.error:
                     self.error_frame.pack_forget()
-                    self.init_main_frame()
+                    self.main_frame.pack(fill='both', expand=True, pady=20)
+                    self.root.update_idletasks()
                     self.error = False
             elif frame == 'error':
                 if not self.error:
                     self.main_frame.pack_forget()
-                    self.error_frame = tk.Label(self.root, bg='red', font=('Trebuchet MS', 125))
                     self.error_frame.pack(fill='both', expand=True)
+                    self.root.update_idletasks()
                     self.error = True
 
         if message_name == 'Dashboard_Vehicle_State':

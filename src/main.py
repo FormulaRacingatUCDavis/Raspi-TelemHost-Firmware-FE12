@@ -55,6 +55,5 @@ def process_can():
 
 threading.Thread(target=process_can, daemon=True).start()
 
-dashboard.init_main_frame()
 dashboard.root.attributes('-zoomed', True)
 dashboard.root.mainloop()
