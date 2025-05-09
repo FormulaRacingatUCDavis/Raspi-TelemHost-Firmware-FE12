@@ -8,7 +8,7 @@ import tkinter as tk
 class FE12Dashboard:
     def __init__(self):
 
-        self.master = tk.Tk()
+        self.root = tk.Tk()
 
         # Dashboard metrics
         self.bms_state = None
@@ -20,7 +20,7 @@ class FE12Dashboard:
         self.glv_voltage = None
         self.soc = None
 
-        # Widget placeholders
+        # Main widget placeholders
         self.lbl_speed = None
         self.header_speed = None
         self.lbl_state = None
@@ -31,103 +31,116 @@ class FE12Dashboard:
         self.header_soc = None
         self.lbl_temp = None
         self.col_div = None
-
-    def create_widgets(self):
-
-        self.master.title('FE12 Dashboard')
-        self.master.configure(bg='black')
-
-        dashboard = tk.Frame(self.master, bg='black')
-        dashboard.pack(fill='both', expand=True, pady=20)
-
-        dashboard.grid_rowconfigure(0, weight=5, uniform='equal')  # Header
-
-        dashboard.grid_rowconfigure(1, weight=10, uniform='equal') 
-        dashboard.grid_rowconfigure(2, weight=10, uniform='equal')
-
-        dashboard.grid_rowconfigure(3, weight=6, uniform='equal')  # Header
-        dashboard.grid_rowconfigure(4, weight=20, uniform='equal')
         
-        dashboard.grid_columnconfigure(0, weight=15, uniform='equal')
-        dashboard.grid_columnconfigure(1, weight=1, uniform='equal') # Column divider
-        dashboard.grid_columnconfigure(2, weight=15, uniform='equal')
+        self.main_frame = None
+        self.error_frame = None
+        self.error = False
+
+    def init_main_frame(self):
+
+        self.root.title('FE12 Dashboard')
+        self.root.configure(bg='black')
+
+        self.main_frame = tk.Frame(self.root, bg='black')
+        self.main_frame.pack(fill='both', expand=True, pady=20)
+
+        self.main_frame.grid_rowconfigure(0, weight=5, uniform='equal')  # Header
+
+        self.main_frame.grid_rowconfigure(1, weight=10, uniform='equal') 
+        self.main_frame.grid_rowconfigure(2, weight=10, uniform='equal')
+
+        self.main_frame.grid_rowconfigure(3, weight=6, uniform='equal')  # Header
+        self.main_frame.grid_rowconfigure(4, weight=20, uniform='equal')
+        
+        self.main_frame.grid_columnconfigure(0, weight=15, uniform='equal')
+        self.main_frame.grid_columnconfigure(1, weight=1, uniform='equal') # Column divider
+        self.main_frame.grid_columnconfigure(2, weight=15, uniform='equal')
 
         padx_out = 10
 
         header_font_size = 20
 
         # Speed
-        self.header_speed = tk.Label(dashboard, text=f'MPH', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
+        self.header_speed = tk.Label(self.main_frame, text=f'MPH', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
         self.header_speed.grid(row=0, column=0, sticky='nsew', padx=(padx_out, 0))
-        self.lbl_speed = tk.Label(dashboard, font=('Trebuchet MS', 75), fg='black', anchor='center', padx=5, pady=5)
+        self.lbl_speed = tk.Label(self.main_frame, font=('Trebuchet MS', 75), fg='black', anchor='center', padx=5, pady=5)
         self.lbl_speed.grid(row=1, column=0, sticky='nsew', rowspan=2, padx=(padx_out, 0))
 
         # Vehicle state
-        self.header_state = tk.Label(dashboard, text=f'STATE:', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='w', pady=5)
+        self.header_state = tk.Label(self.main_frame, text=f'STATE:', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='w', pady=5)
         self.header_state.grid(row=3, column=0, sticky='nsew', padx=(padx_out, 0))
-        self.lbl_state = tk.Label(dashboard, text=self.vcu_state, font=('Trebuchet MS', 35), fg='black', anchor='center', padx=5, pady=5)
+        self.lbl_state = tk.Label(self.main_frame, text=self.vcu_state, font=('Trebuchet MS', 35), fg='black', anchor='center', padx=5, pady=5)
         self.lbl_state.grid(row=4, column=0, sticky='nsew', padx=(padx_out, 0))
 
         # Column Divider
-        self.col_div = tk.Frame(dashboard, bg ='black')
+        self.col_div = tk.Frame(self.main_frame, bg ='black')
         self.col_div.grid(column= 1, sticky='nsew', rowspan=2)
 
         # GLV Voltage
-        self.header_voltage = tk.Label(dashboard, text=f'GLV V', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
+        self.header_voltage = tk.Label(self.main_frame, text=f'GLV V', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
         self.header_voltage.grid(row=3, column=2, sticky='nsew', padx=(0, padx_out))
-        self.lbl_voltage = tk.Label(dashboard, font=('Trebuchet MS', 50), fg='black', anchor='center', padx=5, pady=5)
+        self.lbl_voltage = tk.Label(self.main_frame, font=('Trebuchet MS', 50), fg='black', anchor='center', padx=5, pady=5)
         self.lbl_voltage.grid(row=4, column=2, sticky='nsew', padx=(0, padx_out))
 
         # State of Charge
-        self.header_soc = tk.Label(dashboard, text=f'PACK SOCIT', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
+        self.header_soc = tk.Label(self.main_frame, text=f'PACK SOCIT', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
         self.header_soc.grid(row=0, column=2, sticky='nsew', padx=(0, padx_out))
-        self.lbl_soc = tk.Label(dashboard, font=('Trebuchet MS', 50), anchor='center', padx=5, pady=5)
+        self.lbl_soc = tk.Label(self.main_frame, font=('Trebuchet MS', 50), anchor='center', padx=5, pady=5)
         # Temperature
         self.lbl_soc.grid(row=1, column=2, sticky='nsew', padx=(0, padx_out), pady=(0,5))
-        self.lbl_temp = tk.Label(dashboard, font=('Trebuchet MS', 50), anchor='center', padx=5, pady=5)
+        self.lbl_temp = tk.Label(self.main_frame, font=('Trebuchet MS', 50), anchor='center', padx=5, pady=5)
         self.lbl_temp.grid(row=2, column=2, sticky='nsew', padx=(0, padx_out))
 
     def update_state(self, message_name, data):
-        # Prioritize BMS faults over VCU faults
+
+        def want_frame(frame):
+            if frame == 'main':
+                if self.error:
+                    self.error_frame.pack_forget()
+                    self.init_main_frame()
+                    self.error = False
+            elif frame == 'error':
+                if not self.error:
+                    self.main_frame.pack_forget()
+                    self.error_frame = tk.Label(self.root, bg='red', font=('Trebuchet MS', 125))
+                    self.error_frame.pack(fill='both', expand=True)
+                    self.error = True
 
         if message_name == 'Dashboard_Vehicle_State':
             self.vcu_state = data['State']
         else:
             self.bms_state = data['State']
 
+        # Prioritize BMS faults over VCU faults
         if self.bms_state != 'NO_ERROR' and self.bms_state != None:
+            want_frame('error')
             if isinstance(self.bms_state, int):
                 state = 'YO WTF?'
-                color = 'red'
             else:
                 state = str(self.bms_state).replace('_', ' ')
-                color = 'red'
         else:
             if isinstance(self.vcu_state, int):
+                want_frame('error')
                 state = 'YO WTF?'
-                color = 'red'
             else:
                 state = str(self.vcu_state).replace('_', ' ')
-                match state:
-                    case 'LV':
-                        color = 'lawn green'
-                    case 'PRECHARGE':
-                        color = 'lawn green'
-                    case 'HV ENABLED':
-                        color = 'lawn green'
-                    case 'DRIVE':
-                        color = 'lawn green'
-                    case 'STARTUP':
-                        color = 'lawn green'
-                # Fault states
-                    case 'BSPD TRIPD':
-                        color = 'yellow'
-                    case 'UNCALIBRTD':
-                        color = 'yellow'
-                    case _:
-                        color = 'red'
 
-        self.lbl_state.config(text=state, bg=color)
+                green = {'LV', 'PRECHARGE', 'HV ENABLED', 'DRIVE', 'STARTUP'}
+                yellow = {'BSPD TRIPD', 'UNCALIBRTD'}
+
+                if state in green:
+                    want_frame('main')
+                    color = 'lawn green'
+                elif state in yellow:
+                    want_frame('main')
+                    color = 'yellow'
+                else:
+                    want_frame('error')
+
+        if self.error:
+            self.error_frame.config(text=state)
+        else:
+            self.lbl_state.config(text=state, bg=color)
 
     def update_temp(self, message_name, data):
         # Display highest temperature of motor, motor controller, BMS
