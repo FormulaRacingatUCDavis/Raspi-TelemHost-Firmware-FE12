@@ -5,6 +5,7 @@ import cantools
 import cantools.database
 import threading
 import time
+from datetime import datetime
 import csv
 from dashboard import FE12Dashboard
 
@@ -12,12 +13,14 @@ bus = can.interface.Bus(channel = 'vcan0', interface = 'socketcan')
 db = cantools.database.load_file('src/FE12.dbc')
 dashboard = FE12Dashboard()
 
-csv_file = open('logs/FE12_Log.csv', 'w', newline='')
+timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+LOG_PATH = f'logs/{timestamp}.csv'
+csv_file = open(LOG_PATH, 'w', newline='')
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(['ID', 'D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'Timestamp'])
 
 def process_can():
-    print("Processing CAN messages...")
+    print("Processing CAN messages...\n")
 
     while True:
         msg = bus.recv()
