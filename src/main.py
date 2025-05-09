@@ -31,6 +31,8 @@ def process_can():
                     dashboard.root.after(0, dashboard.update_temp, message.name, data)
                 case 'PEI_Diagnostic_BMS_Data':
                     dashboard.root.after(0, dashboard.update_temp, message.name, data)
+                case 'Dashboard_Knobs':
+                    dashboard.root.after(0, dashboard.update_screen_knob, data)
                 case 'Dashboard_Random_Shit':
                     dashboard.root.after(0, dashboard.update_speed, data)
                 case 'M169_Internal_Voltages':

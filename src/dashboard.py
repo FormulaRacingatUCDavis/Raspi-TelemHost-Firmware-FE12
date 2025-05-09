@@ -19,6 +19,8 @@ class FE12Dashboard:
         self.speed_RPM = None
         self.glv_voltage = None
         self.soc = None
+        self.knob1_percentage = 0
+        self.knob2_percentage = 0
 
         # Main widget placeholders
         self.lbl_speed = None
@@ -209,3 +211,75 @@ class FE12Dashboard:
             color = 'red'
         
         self.lbl_voltage.config(text=f'{(self.glv_voltage):.2f}', bg=color)
+
+    def update_screen_knob(self, data):
+        # Retrieve and clamp knob values
+        knob_1_value = max(0, min(4095, data.get('Knob1', 0)))
+        knob_2_value = max(0, min(4095, data.get('Knob2', 0)))
+
+        # Calculate percentages
+        self.knob1_percentage = knob_1_value / 4095
+        self.knob2_percentage = knob_2_value / 4095
+
+        # Determine active knob
+        if knob_1_value > knob_2_value:
+            active_knob = 1
+        elif knob_2_value > knob_1_value:
+            active_knob = 2
+        else:
+            active_knob = getattr(self, 'last_active_knob', 1)
+
+        self.last_active_knob = active_knob
+
+        # Create or reuse gauge frame
+        if hasattr(self, 'gauge_frame') and self.gauge_frame.winfo_exists():
+            for widget in self.gauge_frame.winfo_children():
+                widget.destroy()
+        else:
+            if hasattr(self, 'main_frame') and self.main_frame:
+                self.main_frame.destroy()
+            if hasattr(self, 'error_frame') and self.error_frame:
+                self.error_frame.destroy()
+            self.gauge_frame = tk.Frame(self.root, bg='black')
+            self.gauge_frame.pack(fill='both', expand=True)
+
+        # Set grid layout
+        self.gauge_frame.columnconfigure(0, weight=1)
+        self.gauge_frame.rowconfigure(0, weight=int(100 - (self.knob1_percentage if active_knob == 1 else self.knob2_percentage) * 100))
+        self.gauge_frame.rowconfigure(1, weight=int((self.knob1_percentage if active_knob == 1 else self.knob2_percentage) * 100))
+
+        # Get current values
+        percentage = self.knob1_percentage if active_knob == 1 else self.knob2_percentage
+        bar_color = self.get_bar_color(percentage)
+        knob_label = "Knob 1" if active_knob == 1 else "Knob 2"
+
+        # Top spacer
+        top_space = tk.Frame(self.gauge_frame, bg='black')
+        top_space.grid(row=0, column=0, sticky='nsew')
+
+        # Bottom gauge bar
+        bottom_bar = tk.Frame(self.gauge_frame, bg=bar_color)
+        bottom_bar.grid(row=1, column=0, sticky='nsew')
+        bottom_bar.grid_rowconfigure(0, weight=1)
+        bottom_bar.grid_columnconfigure(0, weight=1)
+
+        # Centered label
+        label = tk.Label(
+            bottom_bar,
+            text=f'{knob_label}: {round(percentage * 100)}%',
+            font=('Trebuchet MS', 60),
+            fg='black',
+            bg=bar_color
+        )
+        label.grid(row=0, column=0, sticky='nsew')
+
+
+    def get_bar_color(self, knob_percentage):
+        # Changes the color base on the percentage level
+        if knob_percentage < 0.33:
+            return 'lawn green'
+        elif knob_percentage < 0.66:
+            return 'yellow'
+        else:
+            return 'red'
+
