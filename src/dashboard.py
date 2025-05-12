@@ -200,7 +200,17 @@ class FE12Dashboard:
         
         self.lbl_voltage.config(text=f'{(self.glv_voltage):.2f}', bg=color)
 
-    def update_screen_knob(self, data):
+    def update_knob(self, data):
+        
+        def get_bar_color(knob_percentage):
+            # Changes the color base on the percentage level
+            if knob_percentage < 0.33:
+                return 'lawn green'
+            elif knob_percentage < 0.66:
+                return 'yellow'
+            else:
+                return 'red'
+
         # Retrieve and clamp knob values
         knob_1_value = max(0, min(4095, data.get('Knob1', 0)))
         knob_2_value = max(0, min(4095, data.get('Knob2', 0)))
@@ -238,10 +248,10 @@ class FE12Dashboard:
 
         # Get current values
         percentage = self.knob1_percentage if active_knob == 1 else self.knob2_percentage
-        bar_color = self.get_bar_color(percentage)
+        bar_color = get_bar_color(percentage)
         knob_label = "Knob 1" if active_knob == 1 else "Knob 2"
 
-        # Top spacer
+        # Top space
         top_space = tk.Frame(self.gauge_frame, bg='black')
         top_space.grid(row=0, column=0, sticky='nsew')
 
@@ -260,13 +270,3 @@ class FE12Dashboard:
             bg=bar_color
         )
         label.grid(row=0, column=0, sticky='nsew')
-
-
-    def get_bar_color(self, knob_percentage):
-        # Changes the color base on the percentage level
-        if knob_percentage < 0.33:
-            return 'lawn green'
-        elif knob_percentage < 0.66:
-            return 'yellow'
-        else:
-            return 'red'
