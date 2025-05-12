@@ -1,6 +1,7 @@
 #!/home/frucd/projects/FE12TelemetryHost/.venv/bin/python
 
 import can
+import os
 import cantools
 import cantools.database
 import threading
@@ -9,13 +10,21 @@ from datetime import datetime
 import csv
 from dashboard import FE12Dashboard
 
-bus = can.interface.Bus(channel = 'vcan0', interface = 'socketcan')
-db = cantools.database.load_file('src/FE12.dbc')
+bus = can.interface.Bus(channel = 'can0', interface = 'socketcan')
+
+project_root = os.path.dirname(os.path.dirname(__file__))
+
+dbc_path = os.path.join(os.path.dirname(__file__), 'FE12.dbc')
+db = cantools.database.load_file(dbc_path)
 dashboard = FE12Dashboard()
 
 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-LOG_PATH = f'logs/{timestamp}.csv'
-csv_file = open(LOG_PATH, 'w', newline='')
+
+log_dir = os.path.join(project_root, 'logs')
+os.makedirs(log_dir, exist_ok=True)
+log_path = os.path.join(log_dir, f'{timestamp}.csv')
+
+csv_file = open(log_path, 'w', newline='')
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(['ID', 'D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'Timestamp'])
 
