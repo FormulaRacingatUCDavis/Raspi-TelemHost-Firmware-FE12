@@ -1,8 +1,5 @@
 #!/home/frucd/projects/FE12TelemetryHost/.venv/bin/python
 
-# FE12 Dashboard
-# Display data received through Raspberry Pi telemetry host
-
 import tkinter as tk
 
 class FE12Dashboard:
@@ -16,35 +13,17 @@ class FE12Dashboard:
         self.motor_temp = -1
         self.mc_temp = -1
         self.pack_temp = -1
-        self.speed_RPM = None
+        self.max_temp = None
+        self.speed_MPH = None
         self.glv_voltage = None
         self.soc = None
         self.knob1_percentage = 0
         self.knob2_percentage = 0
 
-        # Main widget placeholders
-        self.lbl_speed = None
-        self.header_speed = None
-        self.lbl_state = None
-        self.header_state = None
-        self.lbl_voltage = None
-        self.header_voltage = None
-        self.lbl_soc = None
-        self.header_soc = None
-        self.lbl_temp = None
-        self.col_div = None
-        
-        self.main_frame = None
-        self.error_frame = None
-        self.error = False
-
-    def init_main_frame(self):
-
+        # Main frame
+        self.main_frame = tk.Frame(self.root, bg='black')
         self.root.title('FE12 Dashboard')
         self.root.configure(bg='black')
-
-        self.main_frame = tk.Frame(self.root, bg='black')
-        self.main_frame.pack(fill='both', expand=True, pady=20)
 
         self.main_frame.grid_rowconfigure(0, weight=5, uniform='equal')  # Header
 
@@ -63,43 +42,58 @@ class FE12Dashboard:
         header_font_size = 20
 
         # Speed
-        self.header_speed = tk.Label(self.main_frame, text=f'MPH', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
-        self.header_speed.grid(row=0, column=0, sticky='nsew', padx=(padx_out, 0))
-        self.lbl_speed = tk.Label(self.main_frame, font=('Trebuchet MS', 75), fg='black', anchor='center', padx=5, pady=5)
+        header_speed = tk.Label(self.main_frame, text=f'MPH', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
+        header_speed.grid(row=0, column=0, sticky='nsew', padx=(padx_out, 0))
+        self.lbl_speed = tk.Label(self.main_frame, text=self.speed_MPH, font=('Trebuchet MS', 75), fg='black', anchor='center', padx=5, pady=5)
         self.lbl_speed.grid(row=1, column=0, sticky='nsew', rowspan=2, padx=(padx_out, 0))
 
         # Vehicle state
-        self.header_state = tk.Label(self.main_frame, text=f'STATE:', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='w', pady=5)
-        self.header_state.grid(row=3, column=0, sticky='nsew', padx=(padx_out, 0))
-        self.lbl_state = tk.Label(self.main_frame, text=self.vcu_state, font=('Trebuchet MS', 35), fg='black', anchor='center', padx=5, pady=5)
+        header_state = tk.Label(self.main_frame, text=f'STATE:', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='w', pady=5)
+        header_state.grid(row=3, column=0, sticky='nsew', padx=(padx_out, 0))
+        self.lbl_state = tk.Label(self.main_frame, text=self.vcu_state, font=('Trebuchet MS', 35), bg='lawn green', fg='black', anchor='center', padx=5, pady=5)
         self.lbl_state.grid(row=4, column=0, sticky='nsew', padx=(padx_out, 0))
 
         # Column Divider
-        self.col_div = tk.Frame(self.main_frame, bg ='black')
-        self.col_div.grid(column= 1, sticky='nsew', rowspan=2)
+        col_div = tk.Frame(self.main_frame, bg ='black')
+        col_div.grid(column= 1, sticky='nsew', rowspan=2)
 
         # GLV Voltage
-        self.header_voltage = tk.Label(self.main_frame, text=f'GLV V', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
-        self.header_voltage.grid(row=3, column=2, sticky='nsew', padx=(0, padx_out))
-        self.lbl_voltage = tk.Label(self.main_frame, font=('Trebuchet MS', 50), fg='black', anchor='center', padx=5, pady=5)
+        header_voltage = tk.Label(self.main_frame, text=f'GLV V', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
+        header_voltage.grid(row=3, column=2, sticky='nsew', padx=(0, padx_out))
+        self.lbl_voltage = tk.Label(self.main_frame, text=self.glv_voltage, font=('Trebuchet MS', 50), fg='black', anchor='center', padx=5, pady=5)
         self.lbl_voltage.grid(row=4, column=2, sticky='nsew', padx=(0, padx_out))
 
         # State of Charge
-        self.header_soc = tk.Label(self.main_frame, text=f'PACK SOCIT', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
-        self.header_soc.grid(row=0, column=2, sticky='nsew', padx=(0, padx_out))
-        self.lbl_soc = tk.Label(self.main_frame, font=('Trebuchet MS', 50), anchor='center', padx=5, pady=5)
+        header_soc = tk.Label(self.main_frame, text=f'PACK SOCIT', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
+        header_soc.grid(row=0, column=2, sticky='nsew', padx=(0, padx_out))
+        self.lbl_soc = tk.Label(self.main_frame, text=self.soc, font=('Trebuchet MS', 50), anchor='center', padx=5, pady=5)
         # Temperature
         self.lbl_soc.grid(row=1, column=2, sticky='nsew', padx=(0, padx_out), pady=(0,5))
-        self.lbl_temp = tk.Label(self.main_frame, font=('Trebuchet MS', 50), anchor='center', padx=5, pady=5)
+        self.lbl_temp = tk.Label(self.main_frame, text=self.max_temp, font=('Trebuchet MS', 50), anchor='center', padx=5, pady=5)
         self.lbl_temp.grid(row=2, column=2, sticky='nsew', padx=(0, padx_out))
 
-    def init_error_frame(self, msg):
-        # Full screen red flash for errors
+        self.main_frame.pack(fill='both', expand=True, pady=20)
+        self.root.update_idletasks()
 
-        self.error_frame = tk.Label(self.root, bg='red', text=msg, font=('Trebuchet MS', 125))
-        self.error_frame.pack(fill='both', expand=True)
+        # Error frame
+        self.error_frame = tk.Label(self.root, bg='red', font=('Trebuchet MS', 125))
+        self.error = False
 
     def update_state(self, message_name, data):
+
+        def want_frame(frame):
+            if frame == 'main':
+                if self.error:
+                    self.error_frame.pack_forget()
+                    self.main_frame.pack(fill='both', expand=True, pady=20)
+                    self.root.update_idletasks()
+                    self.error = False
+            elif frame == 'error':
+                if not self.error:
+                    self.main_frame.pack_forget()
+                    self.error_frame.pack(fill='both', expand=True)
+                    self.root.update_idletasks()
+                    self.error = True
 
         if message_name == 'Dashboard_Vehicle_State':
             self.vcu_state = data['State']
@@ -108,38 +102,32 @@ class FE12Dashboard:
 
         # Prioritize BMS faults over VCU faults
         if self.bms_state != 'NO_ERROR' and self.bms_state != None:
+            want_frame('error')
             if isinstance(self.bms_state, int):
                 state = 'YO WTF?'
             else:
                 state = str(self.bms_state).replace('_', ' ')
-            self.error = True
-            print('test')
         else:
             if isinstance(self.vcu_state, int):
+                want_frame('error')
                 state = 'YO WTF?'
-                self.error = True
             else:
                 state = str(self.vcu_state).replace('_', ' ')
+
                 green = {'LV', 'PRECHARGE', 'HV ENABLED', 'DRIVE', 'STARTUP'}
                 yellow = {'BSPD TRIPD', 'UNCALIBRTD'}
+
                 if state in green:
-                    if self.error:
-                        self.error_frame.destroy()
-                        self.init_main_frame()
-                        self.error = False
+                    want_frame('main')
                     color = 'lawn green'
                 elif state in yellow:
-                    if self.error:
-                        self.error_frame.destroy()
-                        self.init_main_frame()
-                        self.error = False
+                    want_frame('main')
                     color = 'yellow'
                 else:
-                    self.error = True
+                    want_frame('error')
 
         if self.error:
-            self.main_frame.destroy()
-            self.init_error_frame(state)
+            self.error_frame.config(text=state)
         else:
             self.lbl_state.config(text=state, bg=color)
 
@@ -155,11 +143,11 @@ class FE12Dashboard:
             self.soc = data['SOC']
             self.lbl_soc.config(text=f'{round(self.soc)}%', bg='red')
 
-        max_temp = -4000
+        self.max_temp = -4000
         color = 'gray'
 
-        if self.motor_temp > max_temp:
-            max_temp = self.motor_temp
+        if self.motor_temp > self.max_temp:
+            self.max_temp = self.motor_temp
             if self.motor_temp < 45:
                 color = 'lawn green'
             elif self.motor_temp < 50:
@@ -167,8 +155,8 @@ class FE12Dashboard:
             else:
                 color = 'red'
 
-        if self.mc_temp > max_temp:
-            max_temp = self.mc_temp
+        if self.mc_temp > self.max_temp:
+            self.max_temp = self.mc_temp
             if self.mc_temp < 45:
                 color = 'lawn green'
             elif self.mc_temp < 50:
@@ -176,8 +164,8 @@ class FE12Dashboard:
             else:
                 color = 'red'
 
-        if self.pack_temp > max_temp:
-            max_temp = self.pack_temp
+        if self.pack_temp > self.max_temp:
+            self.max_temp = self.pack_temp
             if self.pack_temp <= 30:
                 color = 'lawn green'
             elif self.pack_temp <= 40:
@@ -187,17 +175,17 @@ class FE12Dashboard:
             else:
                 color = 'red'
 
-        self.lbl_temp.config(text=f'{round(max_temp)}C', bg=color)
+        self.lbl_temp.config(text=f'{round(self.max_temp)}C', bg=color)
 
     def update_speed(self, data):
         # Slow down speed updates for readability
 
-        self.speed_RPM = data['Front_Wheel_Speed']
+        speed_RPM = data['Front_Wheel_Speed']
 
         circum = 50.2655 # Radius = 8 in
-        speed_MPH = self.speed_RPM * circum * 60 / 63360
+        self.speed_MPH = speed_RPM * circum * 60 / 63360
 
-        self.lbl_speed.config(text=str(round(speed_MPH)), bg='dodger blue')
+        self.lbl_speed.config(text=str(round(self.speed_MPH)), bg='dodger blue')
 
     def update_glv(self, data):
 
