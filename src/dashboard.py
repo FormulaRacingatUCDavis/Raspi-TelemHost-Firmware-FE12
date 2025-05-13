@@ -76,7 +76,20 @@ class FE12Dashboard:
 
         # Bar gauge frame
         self.gauge_frame = tk.Frame(self.root, bg='black')
+        self.gauge_frame.columnconfigure(0, weight=1)
 
+        top_bar = tk.Frame(self.gauge_frame, bg='black')
+        top_bar.grid(row=0, column=0, sticky='nsew')
+
+        bottom_bar = tk.Frame(self.gauge_frame, bg='blue')
+        bottom_bar.grid(row=1, column=0, sticky='nsew')
+        bottom_bar.grid_rowconfigure(0, weight=1)
+        bottom_bar.grid_columnconfigure(0, weight=1)
+
+        self.lbl_gauge = tk.Label(bottom_bar, font=('Trebuchet MS', 60), fg='black', bg='blue')
+        self.lbl_gauge.grid(row=0, column=0, sticky='nsew')
+
+        # Current frame
         self.current_frame = self.main_frame
         self.current_frame.pack(fill='both', expand=True)
         self.root.update_idletasks()
@@ -213,36 +226,13 @@ class FE12Dashboard:
 
         self.last_active_knob = active
 
-        # Create or reuse gauge frame
-        self.main_frame.pack_forget()
-        self.gauge_frame.pack(fill='both', expand=True)
-
         # Set grid layout
-        self.gauge_frame.columnconfigure(0, weight=1)
         self.gauge_frame.rowconfigure(0, weight=int(100 - self.knob1_percentage if active == 1 else self.knob2_percentage))
         self.gauge_frame.rowconfigure(1, weight=int(self.knob1_percentage if active == 1 else self.knob2_percentage))
 
         # Get current values
         percentage = self.knob1_percentage if active == 1 else self.knob2_percentage
-        bar_color = 'yellow'
-        knob_label = "KNOB 1" if active == 1 else "KNOB 2"
+        knob_label = f"KNOB {active}"
+        self.lbl_gauge.config(text=f'{knob_label}: {round(percentage)}%')
 
-        # Top space
-        top_space = tk.Frame(self.gauge_frame, bg='black')
-        top_space.grid(row=0, column=0, sticky='nsew')
-
-        # Bottom gauge bar
-        bottom_bar = tk.Frame(self.gauge_frame, bg=bar_color)
-        bottom_bar.grid(row=1, column=0, sticky='nsew')
-        bottom_bar.grid_rowconfigure(0, weight=1)
-        bottom_bar.grid_columnconfigure(0, weight=1)
-
-        # Centered label
-        label = tk.Label(
-            bottom_bar,
-            text=f'{knob_label}: {round(percentage)}%',
-            font=('Trebuchet MS', 60),
-            fg='black',
-            bg=bar_color
-        )
-        label.grid(row=0, column=0, sticky='nsew')
+        self.want_frame(self.gauge_frame)
