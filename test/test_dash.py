@@ -82,11 +82,11 @@ def test_knobs():
         time.sleep(0.005)
         process_can(msg)
 
-        knob1+= 1
+        knob1 += 1
 
-    print('\nVCU state test complete.')
+    print('\Bar gauge state test complete.')
 
-threading.Thread(target=test_knobs, daemon=True).start() # Enter the function of what you want to test
+threading.Thread(target=test_vcu_state, daemon=True).start() # Enter the function of what you want to test
 dashboard.root.title('FE12 Dashboard - Test Mode')
 dashboard.root.state('zoomed')
 dashboard.root.mainloop()
