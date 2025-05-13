@@ -86,7 +86,7 @@ class FE12Dashboard:
         bottom_bar.grid_rowconfigure(0, weight=1)
         bottom_bar.grid_columnconfigure(0, weight=1)
 
-        self.lbl_gauge = tk.Label(bottom_bar, font=('Trebuchet MS', 60), fg='black', bg='blue')
+        self.lbl_gauge = tk.Label(bottom_bar, font=('Trebuchet MS', 125), fg='black', bg='blue')
         self.lbl_gauge.grid(row=0, column=0, sticky='nsew')
 
         # Current frame
@@ -217,22 +217,22 @@ class FE12Dashboard:
         self.knob2_percentage = (data['Knob2'] / 4095) * 100
 
         # Active knob
-        if self.knob1_percentage > self.knob2_percentage:
-            active = 1
-        elif self.knob2_percentage > self.knob1_percentage:
-            active = 2
-        else:
-            active = getattr(self, 'last_active_knob', 1)
-
+        active = 2
         self.last_active_knob = active
 
+        if active == 1:
+            percentage = self.knob1_percentage
+            knob_color = 'blue'
+        elif active == 2:
+            percentage = self.knob2_percentage
+            knob_color = 'red'
+
         # Set grid layout
-        self.gauge_frame.rowconfigure(0, weight=int(100 - self.knob1_percentage if active == 1 else self.knob2_percentage))
-        self.gauge_frame.rowconfigure(1, weight=int(self.knob1_percentage if active == 1 else self.knob2_percentage))
+        self.gauge_frame.rowconfigure(0, weight=int(100 - percentage))
+        self.gauge_frame.rowconfigure(1, weight=int(percentage))
 
         # Get current values
-        percentage = self.knob1_percentage if active == 1 else self.knob2_percentage
         knob_label = f"KNOB {active}"
-        self.lbl_gauge.config(text=f'{knob_label}: {round(percentage)}%')
+        self.lbl_gauge.config(text=f'{knob_label}: {round(percentage)}%', bg=knob_color)
 
         self.want_frame(self.gauge_frame)

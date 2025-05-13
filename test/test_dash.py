@@ -16,7 +16,7 @@ dashboard = FE12Dashboard()
 dashboard.root.bind('<x>', lambda event: dashboard.root.destroy())
 
 def process_can(msg):
-    time.sleep(0.00203) # Measured logging rate
+    time.sleep(0.203) # Measured logging rate
     try:
         message = db.get_message_by_frame_id(msg.arbitration_id)
         data = message.decode(msg.data)
@@ -71,7 +71,8 @@ def test_knobs():
     knob1 = 0x00
     knob2 = 0x00
 
-    while knob1 <= 4095:
+    while knob1 < 4095:
+        knob1 += 45
         knob_data = {
             'Knob1': knob1,
             'Knob2': knob2
@@ -82,9 +83,19 @@ def test_knobs():
         print(message.decode(msg.data))
         process_can(msg)
 
-        knob1 += 1
+    while knob2 < 4095:
+        knob2 += 45
+        knob_data = {
+            'Knob1': knob1,
+            'Knob2': knob2
+        }
+        encoded_knob_data = message.encode(knob_data)
+        msg = can.Message(arbitration_id=can_id, data=encoded_knob_data)
 
-    print('\Bar gauge state test complete.')
+        print(message.decode(msg.data))
+        process_can(msg)
+
+    print('\nBar gauge state test complete.')
 
 threading.Thread(target=test_knobs, daemon=True).start() # Enter the function of what you want to test
 dashboard.root.title('FE12 Dashboard - Test Mode')
