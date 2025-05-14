@@ -49,7 +49,7 @@ class FE12Dashboard:
         # Vehicle state
         header_state = tk.Label(self.main_frame, text=f'STATE:', font=('Trebuchet MS', header_font_size), bg='black', fg='yellow', anchor='w', pady=5)
         header_state.grid(row=3, column=0, sticky='nsew', padx=(padx_out, 0))
-        self.lbl_state = tk.Label(self.main_frame, text=self.vcu_state, font=('Trebuchet MS', 35), bg='lawn green', fg='black', anchor='center', padx=5, pady=5)
+        self.lbl_state = tk.Label(self.main_frame, text=self.vcu_state, font=('Trebuchet MS', 35), fg='black', anchor='center', padx=5, pady=5)
         self.lbl_state.grid(row=4, column=0, sticky='nsew', padx=(padx_out, 0))
 
         # Column Divider
@@ -72,7 +72,7 @@ class FE12Dashboard:
         self.lbl_temp.grid(row=2, column=2, sticky='nsew', padx=(0, padx_out))
 
         # Error frame
-        self.error_frame = tk.Label(self.root, bg='red', font=('Trebuchet MS', 125))
+        self.error_frame = tk.Label(self.root, bg='orange red', font=('Trebuchet MS', 125))
 
         # Bar gauge frame
         self.gauge_frame = tk.Frame(self.root, bg='black')
@@ -95,7 +95,7 @@ class FE12Dashboard:
         self.root.update_idletasks()
 
     def want_frame(self, frame):
-        if self.current_frame != frame:
+        if self.current_frame != frame and self.current_frame != self.gauge_frame:
             self.current_frame.pack_forget()
             frame.pack(fill='both', expand=True)
             self.root.update_idletasks()
@@ -108,7 +108,7 @@ class FE12Dashboard:
         if message_name == 'Dashboard_Vehicle_State':
             self.vcu_state = data['State']
         else:
-            self.bms_state = data['State']
+            self.bms_state = data['BMS_Status']
 
         # Prioritize BMS faults over VCU faults
         if self.bms_state != 'NO_ERROR' and self.bms_state != None:
@@ -118,6 +118,7 @@ class FE12Dashboard:
                 error = True
             else:
                 state = str(self.bms_state).replace('_', ' ')
+                error = True
         else:
             if isinstance(self.vcu_state, int):
                 state = 'YO WTF?'
@@ -152,7 +153,7 @@ class FE12Dashboard:
         else:
             self.pack_temp = data['HI_Temp']
             self.soc = data['SOC']
-            self.lbl_soc.config(text=f'{round(self.soc)}%', bg='red')
+            self.lbl_soc.config(text=f'{round(self.soc)}%', bg='orange red')
 
         max_temp = -4000
         color = 'gray'
@@ -164,7 +165,7 @@ class FE12Dashboard:
             elif self.motor_temp < 50:
                 color = 'yellow'
             else:
-                color = 'red'
+                color = 'orange red'
 
         if self.mc_temp > max_temp:
             max_temp = self.mc_temp
@@ -173,7 +174,7 @@ class FE12Dashboard:
             elif self.mc_temp < 50:
                 color = 'yellow'
             else:
-                color = 'red'
+                color = 'orange red'
 
         if self.pack_temp > max_temp:
             max_temp = self.pack_temp
@@ -184,7 +185,7 @@ class FE12Dashboard:
             elif self.pack_temp <= 50:
                 color = 'orange'
             else:
-                color = 'red'
+                color = 'orange red'
 
         self.lbl_temp.config(text=f'{round(max_temp)}C', bg=color)
 
@@ -207,31 +208,29 @@ class FE12Dashboard:
         elif self.glv_voltage > 9:
             color = 'yellow'
         else:
-            color = 'red'
+            color = 'orange red'
         
         self.lbl_voltage.config(text=f'{(self.glv_voltage):.2f}', bg=color)
 
     def update_knob(self, data):
 
-        self.knob1_percentage = (data['Knob1'] / 4095) * 100
-        self.knob2_percentage = (data['Knob2'] / 4095) * 100
-
-        # Active knob
-        active = 2
-        self.last_active_knob = active
+        if self.knob1_percentage != (data['Knob1'] / 4095) * 100 and self.knob1_percentage != None:
+            active = 1
+            self.knob1_percentage = (data['Knob1'] / 4095) * 100
+        elif self.knob2_percentage != (data['Knob2'] / 4095) * 100 and self.knob2_percentage != None:
+            active = 2
+            self.knob2_percentage = (data['Knob2'] / 4095) * 100
 
         if active == 1:
             percentage = self.knob1_percentage
             knob_color = 'blue'
         elif active == 2:
             percentage = self.knob2_percentage
-            knob_color = 'red'
+            knob_color = 'orange red'
 
-        # Set grid layout
         self.gauge_frame.rowconfigure(0, weight=int(100 - percentage))
         self.gauge_frame.rowconfigure(1, weight=int(percentage))
 
-        # Get current values
         knob_label = f"KNOB {active}"
         self.lbl_gauge.config(text=f'{knob_label}: {round(percentage)}%', bg=knob_color)
 
