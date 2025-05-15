@@ -66,10 +66,16 @@ def process_can():
                     dashboard.root.after(0, dashboard.update_glv, data)
             
             if time.time() - knob_update_ts > 1 and dashboard.current_frame == dashboard.gauge_frame:
-                dashboard.current_frame.forget()
-                dashboard.main_frame.pack(fill='both', expand=True)
-                dashboard.root.update_idletasks()
-                dashboard.current_frame = dashboard.main_frame
+                if dashboard.bms_error == True or dashboard.vcu_error == True:
+                    dashboard.current_frame.forget()
+                    dashboard.error_frame.pack(fill='both', expand=True)
+                    dashboard.root.update_idletasks()
+                    dashboard.current_frame = dashboard.error_frame
+                else:
+                    dashboard.current_frame.forget()
+                    dashboard.main_frame.pack(fill='both', expand=True)
+                    dashboard.root.update_idletasks()
+                    dashboard.current_frame = dashboard.main_frame
 
         except KeyError:
             print(f"Unknown CAN ID: {hex(msg.arbitration_id)}")

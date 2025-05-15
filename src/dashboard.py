@@ -73,6 +73,8 @@ class FE12Dashboard:
 
         # Error frame
         self.error_frame = tk.Label(self.root, bg='orange red', font=('Trebuchet MS', 125))
+        self.bms_error = False
+        self.vcu_error = False
 
         # Bar gauge frame
         self.gauge_frame = tk.Frame(self.root, bg='black')
@@ -103,8 +105,6 @@ class FE12Dashboard:
 
     def update_state(self, message_name, data):
 
-        error = False
-
         if message_name == 'Dashboard_Vehicle_State':
             self.vcu_state = data['State']
         else:
@@ -115,14 +115,15 @@ class FE12Dashboard:
             self.want_frame(self.error_frame)
             if isinstance(self.bms_state, int):
                 state = 'YO WTF?'
-                error = True
+                self.bms_error = True
             else:
                 state = str(self.bms_state).replace('_', ' ')
-                error = True
+                self.bms_error = True
         else:
+            self.bms_error = False
             if isinstance(self.vcu_state, int):
                 state = 'YO WTF?'
-                error = True
+                self.vcu_error = True
             else:
                 state = str(self.vcu_state).replace('_', ' ')
 
@@ -131,12 +132,14 @@ class FE12Dashboard:
 
                 if state in green:
                     color = 'lawn green'
+                    self.vcu_error = False
                 elif state in yellow:
                     color = 'yellow'
+                    self.vcu_error = False
                 else:
-                    error = True
+                    self.vcu_error = True
 
-        if error:
+        if self.bms_error or self.vcu_error:
             self.error_frame.config(text=state)
             self.want_frame(self.error_frame)
         else:
