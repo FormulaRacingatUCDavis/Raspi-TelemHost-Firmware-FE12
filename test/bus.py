@@ -161,7 +161,9 @@ def test_can_stream():
         print(f"{message.name}: {message.decode(msg.data)}")
         process_can(msg)
 
-threading.Thread(target=test_can_stream, daemon=True).start() # Enter the function of what you want to test
+if __name__ == '__main__':
+    threading.Thread(target=test_can_stream, daemon=True).start()
+
 dashboard.root.title('FE12 Dashboard - Test Mode')
 dashboard.root.state('zoomed')
 dashboard.root.mainloop()

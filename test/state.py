@@ -79,7 +79,9 @@ def test_vcu_state():
 
     print('\nVCU state test complete.')
 
-threading.Thread(target=test_vcu_state, daemon=True).start() # Enter the function of what you want to test
+if __name__ == '__name__':
+    threading.Thread(target=test_vcu_state, daemon=True).start() # Enter the function of what you want to test
+
 dashboard.root.title('FE12 Dashboard - Test Mode')
 dashboard.root.state('zoomed')
 dashboard.root.mainloop()

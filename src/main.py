@@ -30,7 +30,7 @@ csv_file = open(log_path, 'w', newline='')
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(['ID', 'D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'Timestamp'])
 
-def process_can():
+def main():
     print("Processing CAN messages...\n")
 
     global knob_update_ts
@@ -80,7 +80,8 @@ def process_can():
         except KeyError:
             print(f"Unknown CAN ID: {hex(msg.arbitration_id)}")
 
-threading.Thread(target=process_can, daemon=True).start()
+if __name__ == '__main__':
+    threading.Thread(target=main, daemon=True).start()
 
 dashboard.root.attributes('-fullscreen', True)
 dashboard.root.mainloop()

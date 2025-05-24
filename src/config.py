@@ -37,12 +37,12 @@ class RaspberryPi:
     DRDY_PIN    = 17
 
     def __init__(self):
-    # SPI device, bus = 0, device = 1
+    # SPI device, bus = 0, device = 1 (device 0 occupied by RS485 CAN HAT)
         import spidev
         import RPi.GPIO
 
         self.GPIO = RPi.GPIO
-        self.SPI = spidev.SpiDev(0, 1) # Device 1 since device 0 is occupied by RS485 CAN HAT
+        self.SPI = spidev.SpiDev(0, 1)
         self.no_cs = True
 
     def digital_write(self, pin, value):
