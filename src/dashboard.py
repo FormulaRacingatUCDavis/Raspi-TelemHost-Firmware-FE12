@@ -1,5 +1,3 @@
-#!/home/frucd/projects/Raspi-TelemHost-Firmware-FE12/.venv/bin/python
-
 import tkinter as tk
 
 class FE12Dashboard:
