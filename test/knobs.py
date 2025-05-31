@@ -116,7 +116,7 @@ def test_knobs():
 
     print('\nBar gauge state test complete.')
 
-if __name__ == '__main__':
+if __name__ == '__name__':
     threading.Thread(target=test_knobs, daemon=True).start() # Enter the function of what you want to test
 
 dashboard.root.title('FE12 Dashboard - Test Mode')

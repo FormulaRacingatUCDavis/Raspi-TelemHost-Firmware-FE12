@@ -375,7 +375,7 @@ class ADS1263:
             return -1
         self.ADS1263_reset()
         id = self.ADS1263_ReadChipID()
-        if id == 0x01 :
+        if id == 0x01:
             print("ID Read success  ")
         else:
             print("ID Read failed   ")
@@ -548,4 +548,3 @@ class ADS1263:
         config.module_exit()
         
 ### END OF FILE ###
-
