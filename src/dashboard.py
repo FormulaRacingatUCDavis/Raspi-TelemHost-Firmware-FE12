@@ -7,7 +7,7 @@ class Dashboard:
         self.root.title(title)
         self.root.configure(bg='black')
 
-        # Dashboard metrics
+        # Driver mode values
         self.bms_state = None
         self.vcu_state = None
         self.motor_temp = -1
@@ -18,6 +18,19 @@ class Dashboard:
         self.soc = None
         self.knob1_adc = 0
         self.knob2_adc = 0
+
+        # Debug mode values
+        self.d_soc = None
+        self.d_pack_temp = None
+        self.d_mc_temp = None
+        self.d_motor_temp = None
+        self.d_vcu_state = None
+        self.d_glv_voltage = None
+        self.d_shutdown = None
+        self.d_mc_state = None
+        self.d_free_slot = None
+        self.d_free_slot_header = None
+        self.d_free_slot_unit = None
 
         # Main frame
         self.main_frame = tk.Frame(self.root, bg='black')
@@ -96,66 +109,71 @@ class Dashboard:
 
         # Debug frame
         self.debug_frame = tk.Frame(self.root, bg='black')
-        for i in range(7):  # was 6
+        for i in range(7):
             if i % 2 == 0:
-                self.debug_frame.rowconfigure(i, weight=3, uniform='equal')  # Header & bottom spacer
+                self.debug_frame.rowconfigure(i, weight=3, uniform='equal')  # Headers and bottom spacer
             else:
                 self.debug_frame.rowconfigure(i, weight=10, uniform='equal')  # Value
-
-        for j in range(7):  # was 5
+        for j in range(7):
             if j % 2 == 0:
                 self.debug_frame.columnconfigure(j, weight=1, uniform='equal')  # Column divider
             else:
                 self.debug_frame.columnconfigure(j, weight=15, uniform='equal')
 
+        self.debug_soc_h = tk.Label(self.debug_frame, text='SOC', font=('Trebuchet MS', 15, 'bold'), fg='yellow', bg='black', anchor='w')
+        self.debug_pack_temp_h = tk.Label(self.debug_frame, text='PACK TEMP', font=('Trebuchet MS', 15, 'bold'), fg='yellow', bg='black', anchor='w')
+        self.debug_shutdown_h = tk.Label(self.debug_frame, text='SHUTDOWN', font=('Trebuchet MS', 15, 'bold'), fg='yellow', bg='black', anchor='w')
+        self.debug_mc_temp_h= tk.Label(self.debug_frame, text='MC TEMP', font=('Trebuchet MS', 15, 'bold'), fg='yellow', bg='black', anchor='w')
+        self.debug_motor_temp_h = tk.Label(self.debug_frame, text='MOTOR TEMP', font=('Trebuchet MS', 15, 'bold'), fg='yellow', bg='black', anchor='w')
+        self.debug_mc_state_h = tk.Label(self.debug_frame, text='MC STATE', font=('Trebuchet MS', 15, 'bold'), fg='yellow', bg='black', anchor='w')
+        self.debug_vcu_state_h = tk.Label(self.debug_frame, text='STATE', font=('Trebuchet MS', 15, 'bold'), fg='yellow', bg='black', anchor='w')
+        self.debug_glv_voltage_h = tk.Label(self.debug_frame, text='GLV V', font=('Trebuchet MS', 15, 'bold'), fg='yellow', bg='black', anchor='w')
+        self.debug_free_slot_h = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='yellow', bg='black', anchor='w')
+
         debug_headers = [
-            ['PACK SOC', 'PACK TEMP', 'SHUTDOWN CIRCUIT'],
-            ['MC TEMP', 'MOTOR TEMP', 'MC STATE'],
-            ['STATE', 'GLV V', 'DEBUG']
+            self.debug_soc_h, self.debug_pack_temp_h, self.debug_shutdown_h,
+            self.debug_mc_temp_h, self.debug_motor_temp_h, self.debug_mc_state_h,
+            self.debug_vcu_state_h, self.debug_glv_voltage_h, self.debug_free_slot_h
         ]
 
-        self.debug_data = None
+        self.debug_soc = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+        self.debug_pack_temp = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+        self.debug_shutdown = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+        self.debug_mc_temp = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+        self.debug_motor_temp = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+        self.debug_mc_state = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+        self.debug_vcu_state = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+        self.debug_glv_voltage = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+        self.debug_free_slot = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
 
-        self.lbl_d_soc = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-        self.lbl_d_pack_temp = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-        self.lbl_d_shutdown_ckt = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-
-        self.lbl_d_mc_temp = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-        self.lbl_d_motor_temp = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-        self.lbl_d_mc_state = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-
-        self.lbl_d_state = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-        self.lbl_d_glv = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-        self.lbl_d_debug = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-
-        debug_labels = [
-            self.lbl_d_soc, self.lbl_d_pack_temp, self.lbl_d_shutdown_ckt,
-            self.lbl_d_mc_temp, self.lbl_d_motor_temp, self.lbl_d_mc_state,
-            self.lbl_d_state, self.lbl_d_glv, self.lbl_d_debug
+        debug_values = [
+            self.debug_soc, self.debug_pack_temp, self.debug_shutdown,
+            self.debug_mc_temp, self.debug_motor_temp, self.debug_mc_state,
+            self.debug_vcu_state, self.debug_glv_voltage, self.debug_free_slot
         ]
 
-        k = 0
+        debug_header = 0
+        debug_val = 0
         for i in range(6):
             for j in range(7):
                 if i % 2 == 0 and j % 2 == 1:
                     row = i // 2
                     col = j // 2
-                    label = tk.Label(self.debug_frame, text=debug_headers[row][col], font=('Trebuchet MS', 15, 'bold'), fg='yellow', bg='black', anchor='w')
-                    label.grid(row=i, column=j, sticky='nsew')
+                    header = debug_headers[debug_header]
+                    header.grid(row=i, column=j, sticky='nsew')
+                    debug_header += 1
                 elif i % 2 == 1 and j % 2 == 1:
                     row = i // 2
                     col = j // 2
-                    value = debug_labels[k]
+                    value = debug_values[debug_val]
                     value.grid(row=i, column=j, sticky='nsew')
-                    k += 1
+                    debug_val += 1
 
-        # Current frame
+        # Initial state
+        self.mode = 'debug'
         self.current_frame = self.main_frame
-        # self.current_frame = self.debug_frame
         self.current_frame.pack(fill='both', expand=True)
         self.root.update_idletasks()
-
-        self.mode = 'drive'
 
     def switch_frame(self, frame):
         if self.current_frame != frame and self.current_frame != self.gauge_frame:
@@ -164,40 +182,44 @@ class Dashboard:
             self.root.update_idletasks()
             self.current_frame = frame
 
-    def debug_init(self):
-        if self.mode == 'debug':
-            return
-        self.mode = 'debug'
-        self.switch_frame(self.debug_frame)
+    def debug(self, soc, pack_temp, shutdown, mc_temp, motor_temp, mc_state, vcu_state, glv_voltage, free_slot, free_slot_header, free_slot_unit):
+        if self.current_frame != self.debug_frame:
+            self.switch_frame(self.debug_frame)
 
-    def debug_process(self):
-        while self.mode == 'debug':
-            debug_data = {
-                'soc': self.soc,
-                'pack temp': self.pack_temp,
-                'shutdown ckt': None,
-                'mc temp': self.mc_temp,
-                'motor temp': self.motor_temp,
-                'mc state': None,
-                'state': self.vcu_state,
-                'glv': self.glv_voltage,
-                'debug': None
-            }
-            if debug_data == self.debug_data:
-                return
-            self.debug_data = debug_data
+        if soc != self.d_soc:
+            self.d_soc = soc
+            self.debug_soc.config(text=f'{round(self.d_soc)}%')
+        if pack_temp != self.d_pack_temp:
+            self.d_pack_temp = pack_temp
+            self.debug_pack_temp.config(text=f'{round(self.d_pack_temp)}C')
+        if shutdown != self.d_shutdown:
+            self.d_shutdown = shutdown
+            self.debug_shutdown.config(text=self.d_shutdown)
 
-            self.lbl_d_soc.config(text=self.debug_data['soc'])
-            self.lbl_d_pack_temp.config(text=self.debug_data['pack temp'])
-            self.lbl_d_shutdown_ckt.config(text=self.debug_data['shutdown ckt'])
+        if mc_temp != self.d_mc_temp:
+            self.d_mc_temp = mc_temp
+            self.debug_mc_temp.config(text=f'{round(self.d_mc_temp)}C')
+        if motor_temp != self.d_motor_temp:
+            self.d_motor_temp = motor_temp
+            self.debug_motor_temp.config(text=f'{round(self.d_motor_temp)}C')
+        if mc_state != self.d_mc_state:
+            self.d_mc_state = mc_state
+            self.debug_mc_state.config(text=self.d_mc_state)
 
-            self.lbl_d_mc_temp.config(text=self.debug_data['mc temp'])
-            self.lbl_d_motor_temp.config(text=self.debug_data['motor temp'])
-            self.lbl_d_mc_state.config(text=self.debug_data['mc state'])
-
-            self.lbl_d_state.config(text=self.debug_data['state'])
-            self.lbl_d_glv.config(text=self.debug_data['glv'])
-            self.lbl_d_debug.config(text=self.debug_data['debug'])
+        if vcu_state != self.d_vcu_state:
+            self.d_vcu_state = vcu_state
+            self.debug_vcu_state.config(text=self.d_vcu_state)
+        if glv_voltage != self.d_glv_voltage:
+            self.d_glv_voltage = glv_voltage
+            self.debug_glv_voltage.config(text=f'{(self.d_glv_voltage):.2f}')
+            
+        if free_slot != self.d_free_slot:
+            if free_slot_header != self.d_free_slot_header:
+                self.d_free_slot_header = free_slot_header
+                self.d_free_slot_unit = free_slot_unit
+                self.debug_free_slot_h.config(text=f'DEBUG ({free_slot_header})')
+            self.d_free_slot = free_slot
+            self.debug_free_slot.config(text=f'{self.d_free_slot}{self.d_free_slot_unit}')
 
     def update_state(self, vcu_state, bms_state):
         if vcu_state == self.vcu_state and bms_state == self.bms_state:

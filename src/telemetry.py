@@ -25,6 +25,9 @@ class TelemetryManager:
         self.soc = None
         self.knob1_adc = 0
         self.knob2_adc = 0
+        self.shutdown = None
+        self.throttle2 = None
+        self.mc_state = None
 
         self.can_data = None
         self.can_queue = None
@@ -68,6 +71,7 @@ class TelemetryManager:
                 match message.name:
                     case 'Dashboard_Vehicle_State':
                         self.vcu_state = data['State']
+                        self.throttle2 = data['Throttle2_Level']
                     case 'PEI_BMS_Status':
                         self.bms_state = data['BMS_Status']
                     case 'M160_Temperature_Set_1':
@@ -84,6 +88,22 @@ class TelemetryManager:
                         self.knob2_adc = data['Knob2']
                     case 'M169_Internal_Voltages':
                         self.glv_voltage = data['INV_Ref_Voltage_12_0']
+                    case 'PEI_Status':
+                        if data['PRECHARGE'] == 0:
+                            self.shutdown = 'PRECHARGE'
+                        elif data['AIR_NEG'] == 0:
+                            self.shutdown = 'AIR NEG'
+                        elif data['AIR_POS'] == 0:
+                            self.shutdown = 'AIR POS'
+                        elif data['BMS_OK'] == 0:
+                            self.shutdown = 'BMS OK'
+                        elif data['IMD_OK'] == 0:
+                            self.shutdown = 'IMD OK'
+                        elif data['SHUTDOWN_FINAL'] == 0:
+                            self.shutdown = 'SHUTDOWN FINAL'
+                        else:
+                            self.shutdown = 'NO SHUTDOWN'
+
             except KeyError:
                 pass
 
