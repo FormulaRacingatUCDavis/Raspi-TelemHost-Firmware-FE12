@@ -94,38 +94,60 @@ class Dashboard:
 
         self.knob_timestamp = 0
 
-        # # Debug frame
-        # self.debug_frame = tk.Frame(self.root, bg='black')
-        # for i in range(7):  # was 6
-        #     if i % 2 == 0:
-        #         self.debug_frame.rowconfigure(i, weight=3, uniform='equal')  # Header & bottom spacer
-        #     else:
-        #         self.debug_frame.rowconfigure(i, weight=10, uniform='equal')  # Value
+        # Debug frame
+        self.debug_frame = tk.Frame(self.root, bg='black')
+        for i in range(7):  # was 6
+            if i % 2 == 0:
+                self.debug_frame.rowconfigure(i, weight=3, uniform='equal')  # Header & bottom spacer
+            else:
+                self.debug_frame.rowconfigure(i, weight=10, uniform='equal')  # Value
 
-        # for j in range(7):  # was 5
-        #     if j % 2 == 0:
-        #         self.debug_frame.columnconfigure(j, weight=1, uniform='equal')  # Column divider
-        #     else:
-        #         self.debug_frame.columnconfigure(j, weight=15, uniform='equal')
+        for j in range(7):  # was 5
+            if j % 2 == 0:
+                self.debug_frame.columnconfigure(j, weight=1, uniform='equal')  # Column divider
+            else:
+                self.debug_frame.columnconfigure(j, weight=15, uniform='equal')
 
-        # headers = [
-        #     ['PACK SOC', 'PACK TEMP', 'SHUTDOWN CIRCUIT'],
-        #     ['MC TEMP', 'MOTOR TEMP', 'MC STATE'],
-        #     ['STATE', 'GLV V', 'DEBUG']
-        # ]
+        debug_headers = [
+            ['PACK SOC', 'PACK TEMP', 'SHUTDOWN CIRCUIT'],
+            ['MC TEMP', 'MOTOR TEMP', 'MC STATE'],
+            ['STATE', 'GLV V', 'DEBUG']
+        ]
 
-        # for i in range(6):
-        #     for j in range(7):
-        #         if i % 2 == 0 and j % 2 == 1:
-        #             row = i // 2
-        #             col = j // 2
-        #             label = tk.Label(self.debug_frame, text=headers[row][col], font=('Trebuchet MS', header_font_size, 'bold'), fg='yellow', bg='black', anchor='w')
-        #             label.grid(row=i, column=j, sticky='nsew')
-        #         elif i % 2 == 1 and j % 2 == 1:
-        #             row = i // 2
-        #             col = j // 2
-        #             value = tk.Label(self.debug_frame, font=('Trebuchet MS', 50, 'bold'), fg='black', bg='white')
-        #             value.grid(row=i, column=j, sticky='nsew')
+        self.debug_data = None
+
+        self.lbl_d_soc = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+        self.lbl_d_pack_temp = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+        self.lbl_d_shutdown_ckt = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+
+        self.lbl_d_mc_temp = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+        self.lbl_d_motor_temp = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+        self.lbl_d_mc_state = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+
+        self.lbl_d_state = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+        self.lbl_d_glv = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+        self.lbl_d_debug = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+
+        debug_labels = [
+            self.lbl_d_soc, self.lbl_d_pack_temp, self.lbl_d_shutdown_ckt,
+            self.lbl_d_mc_temp, self.lbl_d_motor_temp, self.lbl_d_mc_state,
+            self.lbl_d_state, self.lbl_d_glv, self.lbl_d_debug
+        ]
+
+        k = 0
+        for i in range(6):
+            for j in range(7):
+                if i % 2 == 0 and j % 2 == 1:
+                    row = i // 2
+                    col = j // 2
+                    label = tk.Label(self.debug_frame, text=debug_headers[row][col], font=('Trebuchet MS', 15, 'bold'), fg='yellow', bg='black', anchor='w')
+                    label.grid(row=i, column=j, sticky='nsew')
+                elif i % 2 == 1 and j % 2 == 1:
+                    row = i // 2
+                    col = j // 2
+                    value = debug_labels[k]
+                    value.grid(row=i, column=j, sticky='nsew')
+                    k += 1
 
         # Current frame
         self.current_frame = self.main_frame
@@ -133,12 +155,49 @@ class Dashboard:
         self.current_frame.pack(fill='both', expand=True)
         self.root.update_idletasks()
 
+        self.mode = 'drive'
+
     def switch_frame(self, frame):
         if self.current_frame != frame and self.current_frame != self.gauge_frame:
             self.current_frame.pack_forget()
             frame.pack(fill='both', expand=True)
             self.root.update_idletasks()
             self.current_frame = frame
+
+    def debug_init(self):
+        if self.mode == 'debug':
+            return
+        self.mode = 'debug'
+        self.switch_frame(self.debug_frame)
+
+    def debug_process(self):
+        while self.mode == 'debug':
+            debug_data = {
+                'soc': self.soc,
+                'pack temp': self.pack_temp,
+                'shutdown ckt': None,
+                'mc temp': self.mc_temp,
+                'motor temp': self.motor_temp,
+                'mc state': None,
+                'state': self.vcu_state,
+                'glv': self.glv_voltage,
+                'debug': None
+            }
+            if debug_data == self.debug_data:
+                return
+            self.debug_data = debug_data
+
+            self.lbl_d_soc.config(text=self.debug_data['soc'])
+            self.lbl_d_pack_temp.config(text=self.debug_data['pack temp'])
+            self.lbl_d_shutdown_ckt.config(text=self.debug_data['shutdown ckt'])
+
+            self.lbl_d_mc_temp.config(text=self.debug_data['mc temp'])
+            self.lbl_d_motor_temp.config(text=self.debug_data['motor temp'])
+            self.lbl_d_mc_state.config(text=self.debug_data['mc state'])
+
+            self.lbl_d_state.config(text=self.debug_data['state'])
+            self.lbl_d_glv.config(text=self.debug_data['glv'])
+            self.lbl_d_debug.config(text=self.debug_data['debug'])
 
     def update_state(self, vcu_state, bms_state):
         if vcu_state == self.vcu_state and bms_state == self.bms_state:

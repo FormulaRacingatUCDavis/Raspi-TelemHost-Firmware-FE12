@@ -21,11 +21,22 @@ telem.adhat_init()
 
 def update_dashboard():
     while True:
-        dashboard.update_state(telem.vcu_state, telem.bms_state)
-        dashboard.update_temp(telem.motor_temp, telem.mc_temp, telem.pack_temp, telem.soc)
-        dashboard.update_speed(telem.speed_RPM)
-        dashboard.update_glv(telem.glv_voltage)
-        dashboard.update_knob(telem.knob1_adc, telem.knob2_adc)
+        if dashboard.mode != 'debug':
+            dashboard.update_state(telem.vcu_state, telem.bms_state)
+            dashboard.update_temp(telem.motor_temp, telem.mc_temp, telem.pack_temp, telem.soc)
+            dashboard.update_speed(telem.speed_RPM)
+            dashboard.update_glv(telem.glv_voltage)
+            dashboard.update_knob(telem.knob1_adc, telem.knob2_adc)
+            dashboard.debug_init()
+        else:
+            dashboard.soc = telem.soc
+            dashboard.pack_temp = telem.pack_temp
+
+            dashboard.mc_temp = telem.mc_temp
+            dashboard.motor_temp = telem.motor_temp
+
+            dashboard.vcu_state = telem.vcu_state
+            dashboard.glv_voltage = telem.glv_voltage
 
 if __name__ == '__main__':
     threading.Thread(target=telem.process_can, daemon=True).start()

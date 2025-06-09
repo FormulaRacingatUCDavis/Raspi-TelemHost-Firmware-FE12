@@ -40,10 +40,13 @@ class TelemetryManager:
         self.csv_writer.writeheader()
 
     def adhat_init(self):
-        self.adc = ADS1263.ADS1263()
-        if (self.adc.ADS1263_init_ADC1('ADS1263_400SPS') == -1):
-            exit()
-        self.adc.ADS1263_SetMode(0)
+        try:
+            self.adc = ADS1263.ADS1263()
+            if (self.adc.ADS1263_init_ADC1('ADS1263_400SPS') == -1):
+                exit()
+            self.adc.ADS1263_SetMode(0)
+        except:
+            self.adhat_init()
 
     def can_init(self, channel, interface, dbc_file):
         self.bus = can.interface.Bus(channel = channel, interface = interface)
@@ -51,7 +54,6 @@ class TelemetryManager:
         self.db = cantools.database.load_file(dbc_path)
         self.can_data = {msg.name: None for msg in self.db.messages}
         self.can_queue = Queue()
-
 
     def process_can(self):
         while True:
