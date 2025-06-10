@@ -21,9 +21,9 @@ class Dashboard:
 
         # Debug mode values
         self.d_soc = None
-        self.d_pack_temp = None
-        self.d_mc_temp = None
-        self.d_motor_temp = None
+        self.d_pack_temp = -1
+        self.d_mc_temp = -1
+        self.d_motor_temp = -1
         self.d_vcu_state = None
         self.d_glv_voltage = None
         self.d_shutdown = None
@@ -60,7 +60,7 @@ class Dashboard:
         # Vehicle state
         header_state = tk.Label(self.main_frame, text=f'STATE:', font=('Trebuchet MS', header_font_size, 'bold'), bg='black', fg='yellow', anchor='w', pady=5)
         header_state.grid(row=3, column=0, sticky='nsew', padx=(padx_out, 0))
-        self.lbl_state = tk.Label(self.main_frame, text='STARTUP', font=('Trebuchet MS', 35, 'bold'), fg='black', anchor='center', padx=5, pady=5)
+        self.lbl_state = tk.Label(self.main_frame, text='STARTUP', font=('Trebuchet MS', 40, 'bold'), fg='black', anchor='center', padx=5, pady=5)
         self.lbl_state.grid(row=4, column=0, sticky='nsew', padx=(padx_out, 0))
 
         # Column Divider
@@ -128,7 +128,7 @@ class Dashboard:
         self.debug_mc_state_h = tk.Label(self.debug_frame, text='MC STATE', font=('Trebuchet MS', 15, 'bold'), fg='yellow', bg='black', anchor='w')
         self.debug_vcu_state_h = tk.Label(self.debug_frame, text='STATE', font=('Trebuchet MS', 15, 'bold'), fg='yellow', bg='black', anchor='w')
         self.debug_glv_voltage_h = tk.Label(self.debug_frame, text='GLV V', font=('Trebuchet MS', 15, 'bold'), fg='yellow', bg='black', anchor='w')
-        self.debug_free_slot_h = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='yellow', bg='black', anchor='w')
+        self.debug_free_slot_h = tk.Label(self.debug_frame, text='DEBUG', font=('Trebuchet MS', 15, 'bold'), fg='yellow', bg='black', anchor='w')
 
         debug_headers = [
             self.debug_soc_h, self.debug_pack_temp_h, self.debug_shutdown_h,
@@ -136,15 +136,15 @@ class Dashboard:
             self.debug_vcu_state_h, self.debug_glv_voltage_h, self.debug_free_slot_h
         ]
 
-        self.debug_soc = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-        self.debug_pack_temp = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-        self.debug_shutdown = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-        self.debug_mc_temp = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-        self.debug_motor_temp = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-        self.debug_mc_state = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-        self.debug_vcu_state = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-        self.debug_glv_voltage = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
-        self.debug_free_slot = tk.Label(self.debug_frame, font=('Trebuchet MS', 15, 'bold'), fg='black', bg='white')
+        self.debug_soc = tk.Label(self.debug_frame, font=('Trebuchet MS', 50, 'bold'), fg='black', bg='white')
+        self.debug_pack_temp = tk.Label(self.debug_frame, font=('Trebuchet MS', 50, 'bold'), fg='black', bg='white')
+        self.debug_shutdown = tk.Label(self.debug_frame, font=('Trebuchet MS', 22, 'bold'), fg='black', bg='white')
+        self.debug_mc_temp = tk.Label(self.debug_frame, font=('Trebuchet MS', 50, 'bold'), fg='black', bg='white')
+        self.debug_motor_temp = tk.Label(self.debug_frame, font=('Trebuchet MS', 50, 'bold'), fg='black', bg='white')
+        self.debug_mc_state = tk.Label(self.debug_frame, font=('Trebuchet MS', 50, 'bold'), fg='black', bg='white')
+        self.debug_vcu_state = tk.Label(self.debug_frame, font=('Trebuchet MS', 22, 'bold'), fg='black', bg='white')
+        self.debug_glv_voltage = tk.Label(self.debug_frame, font=('Trebuchet MS', 50, 'bold'), fg='black', bg='white')
+        self.debug_free_slot = tk.Label(self.debug_frame, font=('Trebuchet MS', 50, 'bold'), fg='black', bg='white')
 
         debug_values = [
             self.debug_soc, self.debug_pack_temp, self.debug_shutdown,
@@ -170,8 +170,9 @@ class Dashboard:
                     debug_val += 1
 
         # Initial state
-        self.mode = 'debug'
+        self.mode = 'drive'
         self.current_frame = self.main_frame
+        self.previous_frame = None
         self.current_frame.pack(fill='both', expand=True)
         self.root.update_idletasks()
 
@@ -207,8 +208,11 @@ class Dashboard:
             self.debug_mc_state.config(text=self.d_mc_state)
 
         if vcu_state != self.d_vcu_state:
-            self.d_vcu_state = vcu_state
-            self.debug_vcu_state.config(text=self.d_vcu_state)
+            if isinstance(vcu_state, int):
+                self.d_vcu_state = 'YO WTF'
+            else:
+                self.d_vcu_state = vcu_state
+            self.debug_vcu_state.config(text=str(self.d_vcu_state).replace('_', ' '))
         if glv_voltage != self.d_glv_voltage:
             self.d_glv_voltage = glv_voltage
             self.debug_glv_voltage.config(text=f'{(self.d_glv_voltage):.2f}')
@@ -219,7 +223,7 @@ class Dashboard:
                 self.d_free_slot_unit = free_slot_unit
                 self.debug_free_slot_h.config(text=f'DEBUG ({free_slot_header})')
             self.d_free_slot = free_slot
-            self.debug_free_slot.config(text=f'{self.d_free_slot}{self.d_free_slot_unit}')
+            self.debug_free_slot.config(text=f'{round(self.d_free_slot)}{self.d_free_slot_unit}')
 
     def update_state(self, vcu_state, bms_state):
         if vcu_state == self.vcu_state and bms_state == self.bms_state:
@@ -363,15 +367,17 @@ class Dashboard:
                         self.current_frame = self.error_frame
                     else:
                         self.current_frame.forget()
-                        self.main_frame.pack(fill='both', expand=True)
+                        self.previous_frame.pack(fill='both', expand=True)
                         self.root.update_idletasks()
-                        self.current_frame = self.main_frame
+                        self.current_frame = self.previous_frame
             return
+        
+        if self.current_frame != self.gauge_frame:
+            self.previous_frame = self.current_frame
+            self.switch_frame(self.gauge_frame)
 
         self.gauge_frame.rowconfigure(0, weight=int(100 - percentage))
         self.gauge_frame.rowconfigure(1, weight=int(percentage))
 
         self.lbl_gauge.config(text=str(round(percentage)), bg=color)
         self.knob_timestamp = time.time()
-
-        self.switch_frame(self.gauge_frame)
