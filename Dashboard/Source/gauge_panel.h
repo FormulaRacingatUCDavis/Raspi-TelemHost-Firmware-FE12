@@ -19,8 +19,7 @@ namespace frucd
     public:
         GaugePanel(MainWindow* mainWnd, Telem& telem);
 
-        // TODO: optimize this
-        void Update();
+        void UpdateKnobs(double knob1, double knob2);
 
     public:
         inline wxSizer* GetSizer() { return mMainSizer; }
@@ -30,9 +29,14 @@ namespace frucd
     
     private:
         wxSizer* mMainSizer;
+        MainWindow* mMainWindow;
+        
         wxStaticText* mPercentView;
 
         wxPanel* mPercentFg;
         wxPanel* mPercentBg;
+
+        int mKnob1Percent{0};
+        int mKnob2Percent{0};
     };
 }

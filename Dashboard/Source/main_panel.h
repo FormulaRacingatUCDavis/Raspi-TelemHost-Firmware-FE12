@@ -23,7 +23,6 @@ namespace frucd
         void UpdateTemp(double motorTemp, double mcTemp, double packTemp, double soc);
         void UpdateSpeed(double speedRpm);
         void UpdateGlv(double glvVoltage);
-        void UpdateKnob(double knob1Adc, double knob2Adc);
 
     public:
         inline wxSizer* GetSizer() { return mMainSizer; }

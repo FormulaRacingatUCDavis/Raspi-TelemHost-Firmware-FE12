@@ -9,6 +9,15 @@
 #include "palette.h"
 #include "utils.h"
 
+#ifdef FRUCD_USE_RASPI
+    #include <ADS1263/ADS1263.h>
+    #include <sys/socket.h>
+    #include <sys/ioctl.h>
+    #include <net/if.h>
+    #include <linux/can.h>
+    #include <linux/can/raw.h>
+#endif
+
 namespace frucd
 {
     DebugPanel::DebugPanel(MainWindow* mainWnd, Telem& telem)

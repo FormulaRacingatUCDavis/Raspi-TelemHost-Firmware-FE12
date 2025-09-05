@@ -8,12 +8,22 @@
 #include "palette.h"
 #include "utils.h"
 
+#ifdef FRUCD_USE_RASPI
+    #include <ADS1263/ADS1263.h>
+    #include <sys/socket.h>
+    #include <sys/ioctl.h>
+    #include <net/if.h>
+    #include <linux/can.h>
+    #include <linux/can/raw.h>
+#endif
+
 namespace frucd
 {
     static const wxColor blackColor = wxColor(10, 10, 10);
 
     GaugePanel::GaugePanel(MainWindow* mainWnd, Telem& telem)
         : wxPanel(mainWnd, wxID_ANY)
+        , mMainWindow(mainWnd)
         , mMainSizer(new wxBoxSizer(wxVERTICAL))
     {
         const int margin = FromDIP(20);
@@ -67,10 +77,47 @@ namespace frucd
         );
     }
 
-    void GaugePanel::Update()
+    void GaugePanel::UpdateKnobs(double knob1, double knob2)
     {
-        mPercentFg->SetPosition(mPercentBg->GetPosition());
-        mPercentFg->SetSize(mPercentBg->GetSize());
+        static bool isOn = false;
+        static auto lastTime = std::chrono::high_resolution_clock::now();
+        
+        constexpr double adcMax = 4095.0;
+        constexpr float gaugePopupDuration = 2.0;
+
+        int knob1Percent = (knob1 / adcMax) * 100.0;
+        int knob2Percent = (knob2 / adcMax) * 100.0;
+        if (knob1Percent != mKnob1Percent)
+        {
+            mKnob1Percent = knob1Percent;
+            mPercentView->SetLabel(std::to_string(mKnob1Percent) + "%");
+            mMainWindow->SetMode(2); // TODO: use cleaner method
+            // Set up gauge window, color
+            isOn = true;
+            lastTime = std::chrono::high_resolution_clock::now();
+        }
+        else if (knob2Percent != mKnob2Percent)
+        {
+            mKnob2Percent = knob2Percent;
+            mPercentView->SetLabel(std::to_string(mKnob2Percent) + "%");
+            mMainWindow->SetMode(2); // TODO: use cleaner method
+            // Set up gauge window, color
+            isOn = true;
+            lastTime = std::chrono::high_resolution_clock::now();
+        }
+        else
+        {
+            if (isOn)
+            {
+                auto currentTime = std::chrono::high_resolution_clock::now();
+                if (float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - lastTime).count();
+                    time >= gaugePopupDuration)
+                {
+                    mMainWindow->SetMode(0); // TODO: could pop the window, but this should work fine
+                    isOn = false;
+                }
+            }
+        }
     }
 
     void GaugePanel::OnFeCan(const dbcppp::IMessage& msg, const dbcppp::INetwork& net, const can_frame& frame)
@@ -91,7 +138,7 @@ namespace frucd
 
         if (msg.Name() == "Dashboard_Knobs")
         {
-            UpdateKnob(sigMap["Knob1"].second, sigMap["Knob2"].second);
+            UpdateKnobs(sigMap["Knob1"].second, sigMap["Knob2"].second);
         }
 #endif
     }

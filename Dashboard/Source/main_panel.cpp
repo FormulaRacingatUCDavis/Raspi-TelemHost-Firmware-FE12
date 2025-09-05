@@ -235,16 +235,6 @@ namespace frucd
         mGlvVoltageView->SetBackgroundColour(resColor);
     }
 
-    void MainPanel::UpdateKnob(double knob1Adc, double knob2Adc)
-    {
-        double percentage = knob1Adc;
-
-        // Switch into gauge frame
-        mKnobTimestamp = std::chrono::system_clock::now();
-
-        // TODO
-    }
-
     void MainPanel::OnFeCan(const dbcppp::IMessage& msg, const dbcppp::INetwork& net, const can_frame& frame)
     {
 #ifdef FRUCD_USE_RASPI
@@ -304,7 +294,7 @@ namespace frucd
             else if (isState("BMS_OK")) mShutdown = "BMS_OK";
             else if (isState("IMD_OK")) mShutdown = "IMD_OK";
             else if (isState("SHUTDOWN_FINAL")) mShutdown = "SHUTDOWN_FINAL";
-            else mShutdown = "NO_SHUTDOWN"
+            else mShutdown = "NO_SHUTDOWN";
         }
 #endif
     }

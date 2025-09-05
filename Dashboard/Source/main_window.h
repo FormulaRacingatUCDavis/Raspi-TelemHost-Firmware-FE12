@@ -22,7 +22,7 @@ namespace frucd
         void OnKeyUp(wxKeyEvent& e);
         void OnUpdate(wxIdleEvent& e);
 
-        void SetMode(double mode);
+        void SetMode(double mode); // TODO: use a cleaner way - this was just the original
 
     private:
         void ShowMainPanel();

@@ -118,6 +118,8 @@ namespace frucd
             ShowMainPanel();
         else if (mode == 1.0)
             ShowDebugPanel();
+        else if (mode == 2.0)
+            ShowGaugePanel();
     }
 
     void MainWindow::ShowMainPanel()
