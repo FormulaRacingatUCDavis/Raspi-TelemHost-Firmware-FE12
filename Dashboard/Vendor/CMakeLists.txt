@@ -3,6 +3,11 @@ target_include_directories(frucd_raspi_dash
         "${CMAKE_CURRENT_LIST_DIR}"
 )
 
+target_link_libraries(frucd_raspi_dash
+    PRIVATE
+        dbcppp
+)
+
 if (LINUX)
     message(STATUS "Compiling Raspberry Pi Utilities")
 

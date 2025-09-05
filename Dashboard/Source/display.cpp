@@ -7,8 +7,8 @@ namespace frucd
     bool Display::OnInit()
     {
         MainWindow* wnd = new MainWindow(); // No leak, managed by wx
-        wnd->Show();
         //wnd->ShowFullScreen(true, wxFULLSCREEN_ALL);
+        wnd->Show();
         return true;
     }
 }
