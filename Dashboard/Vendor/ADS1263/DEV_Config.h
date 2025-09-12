@@ -42,7 +42,7 @@
 
 #ifdef RPI
     #ifdef USE_BCM2835_LIB
-        #include <bcm2835.h>
+        #include "bcm2835.h"
     #elif USE_WIRINGPI_LIB
         #include <wiringPi.h>
         #include <wiringPiSPI.h>
