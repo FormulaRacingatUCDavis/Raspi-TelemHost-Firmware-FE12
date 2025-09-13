@@ -16,15 +16,13 @@ namespace frucd
     public:
         MainWindow();
 
-    public:
-        void OnUpdateUI(wxUpdateUIEvent& e);
-        void OnKeyDown(wxKeyEvent& e);
-        void OnKeyUp(wxKeyEvent& e);
-        void OnUpdate(wxIdleEvent& e);
-
         void SetMode(double mode); // TODO: use a cleaner way - this was just the original
 
     private:
+        void OnUpdateUI(wxUpdateUIEvent& e);
+        void OnUpdate(wxIdleEvent& e);
+        void OnKeyCharHook(wxKeyEvent& e);
+
         void ShowMainPanel();
         void ShowDebugPanel();
         void ShowGaugePanel();

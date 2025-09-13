@@ -22,8 +22,6 @@ namespace frucd
         );
 
         res->SetForegroundColour(fgColor);
-        res->Bind(wxEVT_KEY_UP, &MainWindow::OnKeyUp, wnd);
-        res->Bind(wxEVT_KEY_DOWN, &MainWindow::OnKeyDown, wnd);
 
         wxFont font(wxFontInfo(int(10 * fontScale))
                         .Family(wxFONTFAMILY_DEFAULT)

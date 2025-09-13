@@ -40,7 +40,7 @@ namespace frucd
         const float tFontScale = 5.0f;
         const float vFontScale = 8.0f;
 
-        const wxColor blackColor = wxColor(10, 10, 10);
+        const wxColor blackColor = wxColor(0, 0, 0);
         const wxColor labelColor = wxColor(255, 255, 100);
         
         SetBackgroundColour(blackColor);
@@ -101,7 +101,7 @@ namespace frucd
 
         SetSizer(sizer);
 
-        mMainSizer->Add(this, 1, wxEXPAND | wxALL, FromDIP(20));
+        mMainSizer->Add(this, 1, wxEXPAND);
 
         telem.RegisterCanObserver(
             [this](const dbcppp::IMessage& msg, const dbcppp::INetwork& net, const can_frame& frame)
@@ -326,10 +326,6 @@ namespace frucd
         else if (msg.Name() == "M162_Temperature_Set_3")
         {
             UpdateTemp(sigMap["INV_Motor_Temp"].second, mMcTemp, mPackTemp, mSoc);
-        }
-        else if (msg.Name() == "M169_Internal_Voltages")
-        {
-            UpdateGlv(sigMap["INV_Ref_Voltage_12_0"].second);
         }
         else if (msg.Name() == "M169_Internal_Voltages")
         {

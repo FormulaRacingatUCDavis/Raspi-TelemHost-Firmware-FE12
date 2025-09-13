@@ -20,36 +20,19 @@ namespace frucd
         , mPanelCollection(new wxSimplebook(this))
         , mMainSizer(new wxBoxSizer(wxVERTICAL))
     {
-        const int margin = 0;
         mPanelCollection->AddPage(mMainPanel, "Main");
         mPanelCollection->AddPage(mDebugPanel, "Debug");
         mPanelCollection->AddPage(mGaugePanel, "Gauge");
 
-        mPanelCollection->Bind(wxEVT_KEY_UP, &MainWindow::OnKeyUp, this);
-        mPanelCollection->Bind(wxEVT_KEY_DOWN, &MainWindow::OnKeyDown, this);
-        mPanelCollection->Bind(wxEVT_UPDATE_UI, &MainWindow::OnUpdateUI, this);
-        mPanelCollection->Bind(wxEVT_IDLE, &MainWindow::OnUpdate, this);
+        Bind(wxEVT_IDLE, &MainWindow::OnUpdate, this);
 
-        mMainSizer->Add(mPanelCollection, 1, wxEXPAND | wxALL, margin);
+        Bind(wxEVT_CHAR_HOOK, &MainWindow::OnKeyCharHook, this);
+
+        mMainSizer->Add(mPanelCollection, 1, wxEXPAND | wxALL, 0);
         SetSizerAndFit(mMainSizer);
 
         ShowMainPanel();
-
-        mMainPanel->Bind(wxEVT_KEY_UP, &MainWindow::OnKeyUp, this);
-        mMainPanel->Bind(wxEVT_KEY_DOWN, &MainWindow::OnKeyDown, this);
-        mMainPanel->Bind(wxEVT_UPDATE_UI, &MainWindow::OnUpdateUI, this);
-        mMainPanel->Bind(wxEVT_IDLE, &MainWindow::OnUpdate, this);
-
-        mDebugPanel->Bind(wxEVT_KEY_UP, &MainWindow::OnKeyUp, this);
-        mDebugPanel->Bind(wxEVT_KEY_DOWN, &MainWindow::OnKeyDown, this);
-        mDebugPanel->Bind(wxEVT_UPDATE_UI, &MainWindow::OnUpdateUI, this);
-        mDebugPanel->Bind(wxEVT_IDLE, &MainWindow::OnUpdate, this);
-
-        mGaugePanel->Bind(wxEVT_KEY_UP, &MainWindow::OnKeyUp, this);
-        mGaugePanel->Bind(wxEVT_KEY_DOWN, &MainWindow::OnKeyDown, this);
-        mGaugePanel->Bind(wxEVT_UPDATE_UI, &MainWindow::OnUpdateUI, this);
-        mGaugePanel->Bind(wxEVT_IDLE, &MainWindow::OnUpdate, this);
-
+        // ShowDebugPanel();
         ShowFullScreen(true);
     }
 
@@ -57,47 +40,21 @@ namespace frucd
     {
     }
 
-    void MainWindow::OnKeyDown(wxKeyEvent& e)
-    {
-        if (e.GetKeyCode() == WXK_UP)
-        {
-            ShowDebugPanel();
-        }
-        else
-        {
-            e.Skip(false);
-        }
-    }
-
-    void MainWindow::OnKeyUp(wxKeyEvent& e)
-    {
-        if (e.GetKeyCode() == WXK_ESCAPE)
-        {
-            Close(true);
-        }
-        else if (e.GetKeyCode() == WXK_UP)
-        {
-            ShowMainPanel();
-        }
-        else
-        {
-            e.Skip(false);
-        }
-    }
-
-    
     void MainWindow::OnUpdate(wxIdleEvent& e)
     {
-        // https://github.com/Overv/VulkanTutorial/blob/main/en/05_Uniform_buffers/00_Descriptor_set_layout_and_buffer.md
 #if FRUCD_SHOW_FPS
         static int fps = 0;
         static auto startTime = std::chrono::high_resolution_clock::now();
-        static auto lastTime = std::chrono::high_resolution_clock::now();
-        static double osc = 0.01;
 #endif
 
         mTelem.Log();
-        mGaugePanel->Update();
+
+        switch (mPanelCollection->GetSelection())
+        {
+            case 0: mMainPanel->Update(); break;
+            case 1: mDebugPanel->Update(); break;
+            case 2: mGaugePanel->Update(); break;
+        }
 
 #if FRUCD_SHOW_FPS
         fps++;
@@ -114,6 +71,35 @@ namespace frucd
         e.RequestMore(); // Used as an "update method"
     }
 
+    void MainWindow::OnKeyCharHook(wxKeyEvent& e)
+    {
+        switch (e.GetKeyCode())
+        {
+            case WXK_ESCAPE:
+                Close(true);
+                break;
+
+            case WXK_UP:
+                if (mPanelCollection->GetSelection() == 1)
+                    ShowMainPanel();
+                else
+                    ShowDebugPanel();
+                break;
+
+            case WXK_DOWN:
+                ShowGaugePanel();
+                break;
+
+            case WXK_LEFT:
+                ShowMainPanel();
+                break;
+
+            default:
+                e.Skip();
+                break;
+        }
+    }
+
     void MainWindow::SetMode(double mode)
     {
         if (mode == 0.0)
@@ -128,26 +114,17 @@ namespace frucd
     {
         mPanelCollection->ChangeSelection(0);
         SetBackgroundColour(mMainPanel->GetBackgroundColour());
-        mMainPanel->SetClientSize(wxDefaultSize);
-        mDebugPanel->SetClientSize(wxSize(0, 0));
-        mGaugePanel->SetClientSize(wxSize(0, 0));
     }
 
     void MainWindow::ShowDebugPanel()
     {
         mPanelCollection->ChangeSelection(1);
         SetBackgroundColour(mDebugPanel->GetBackgroundColour());
-        mMainPanel->SetClientSize(wxSize(0, 0));
-        mDebugPanel->SetClientSize(wxDefaultSize);
-        mGaugePanel->SetClientSize(wxSize(0, 0));
     }
 
     void MainWindow::ShowGaugePanel()
     {
         mPanelCollection->ChangeSelection(2);
         SetBackgroundColour(mGaugePanel->GetBackgroundColour());
-        mMainPanel->SetClientSize(wxSize(0, 0));
-        mDebugPanel->SetClientSize(wxSize(0, 0));
-        mGaugePanel->SetClientSize(wxDefaultSize);
     }
 }
