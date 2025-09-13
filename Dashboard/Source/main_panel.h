@@ -35,17 +35,17 @@ namespace frucd
         wxSizer* mMainSizer;
         MainWindow* mMainWindow;
 
-        wxTextCtrl* mMphText;
+        wxStaticText* mMphText;
         wxStaticText* mMphView;
 
-        wxTextCtrl* mPackSocitText;
+        wxStaticText* mPackSocitText;
         wxStaticText* mSocView;
         wxStaticText* mTempView;
 
-        wxTextCtrl* mStateText;
+        wxStaticText* mStateText;
         wxStaticText* mStateView;
 
-        wxTextCtrl* mGlvVoltageText;
+        wxStaticText* mGlvVoltageText;
         wxStaticText* mGlvVoltageView;
 
         std::chrono::system_clock::time_point mErrorTimestamp;

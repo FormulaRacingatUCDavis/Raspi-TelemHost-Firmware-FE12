@@ -60,10 +60,6 @@ namespace frucd
 #ifdef FRUCD_USE_RASPI
         can_frame frame;
         int numBytes = read(mCanSock, &frame, sizeof(can_frame));
-        if (numBytes < 0)
-        {
-            std::cerr << "Failed to read from CAN Socket!\n";
-        }
 
         uint32_t id = (0x1FFFFFFF & frame.can_id);
         if (auto it = mFeMsgs.find(id);

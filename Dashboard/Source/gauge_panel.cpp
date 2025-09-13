@@ -41,8 +41,8 @@ namespace frucd
             {{0, 1}, {1, 1}}
         };
 
-        mPercentView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, gDodgerBlue, mainWnd, 4.0f);
-        sizer->Add(mPercentView, items[0].first, items[0].second, wxEXPAND);
+        mPercentView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, 4.0f);
+        sizer->Add(mPercentView->GetParent(), items[0].first, items[0].second, wxEXPAND);
 
         mPercentBg = new wxPanel(this, wxID_ANY);
         mPercentBg->SetBackgroundColour(gOrange);

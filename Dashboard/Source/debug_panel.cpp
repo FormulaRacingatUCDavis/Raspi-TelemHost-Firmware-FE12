@@ -64,69 +64,69 @@ namespace frucd
         };
 
         // Soc
-        mSocText = CreateTextHeader(this, "SOC", sizer->GetEmptyCellSize(), labelColor, labelBgrColor, mainWnd, 2.0f);
+        mSocText = CreateTextHeader(this, "SOC", sizer->GetEmptyCellSize(), labelColor, mainWnd, 2.0f);
         sizer->Add(mSocText, items[0].first, items[0].second, wxEXPAND);
 
-        mSocView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, whiteColor, mainWnd, 4.0f);
-        sizer->Add(mSocView, items[3].first, items[3].second, wxEXPAND);
+        mSocView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, 4.0f);
+        sizer->Add(mSocView->GetParent(), items[3].first, items[3].second, wxEXPAND);
 
         // PACK SOCIT
-        mPackTempText = CreateTextHeader(this, "PACK TEMP", sizer->GetEmptyCellSize(), labelColor, labelBgrColor, mainWnd, 2.0f);
+        mPackTempText = CreateTextHeader(this, "PACK TEMP", sizer->GetEmptyCellSize(), labelColor, mainWnd, 2.0f);
         sizer->Add(mPackTempText, items[1].first, items[1].second, wxEXPAND);
         
-        mPackTempView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, whiteColor, mainWnd, 4.0f);
-        sizer->Add(mPackTempView, items[4].first, items[4].second, wxEXPAND);
+        mPackTempView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, 4.0f);
+        sizer->Add(mPackTempView->GetParent(), items[4].first, items[4].second, wxEXPAND);
 
         // SHUTDOWN
-        mShutdownText = CreateTextHeader(this, "SHUTDOWN", sizer->GetEmptyCellSize(), labelColor, labelBgrColor, mainWnd, 2.0f);
+        mShutdownText = CreateTextHeader(this, "SHUTDOWN", sizer->GetEmptyCellSize(), labelColor, mainWnd, 2.0f);
         sizer->Add(mShutdownText, items[2].first, items[2].second, wxEXPAND);
 
-        mShutdownView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, whiteColor, mainWnd, 4.0f);
-        sizer->Add(mShutdownView, items[5].first, items[5].second, wxEXPAND);
+        mShutdownView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, 4.0f);
+        sizer->Add(mShutdownView->GetParent(), items[5].first, items[5].second, wxEXPAND);
 
         // MC TEMP
-        mMcTempText = CreateTextHeader(this, "MC TEMP", sizer->GetEmptyCellSize(), labelColor, labelBgrColor, mainWnd, 2.0f);
+        mMcTempText = CreateTextHeader(this, "MC TEMP", sizer->GetEmptyCellSize(), labelColor, mainWnd, 2.0f);
         sizer->Add(mMcTempText, items[6].first, items[6].second, wxEXPAND);
 
-        mMcTempView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, whiteColor, mainWnd, 4.0f);
-        sizer->Add(mMcTempView, items[9].first, items[9].second, wxEXPAND);
+        mMcTempView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, 4.0f);
+        sizer->Add(mMcTempView->GetParent(), items[9].first, items[9].second, wxEXPAND);
 
         // MOTOR TEMP
-        mMotorTempText = CreateTextHeader(this, "MOTOR TEMP", sizer->GetEmptyCellSize(), labelColor, labelBgrColor, mainWnd, 2.0f);
+        mMotorTempText = CreateTextHeader(this, "MOTOR TEMP", sizer->GetEmptyCellSize(), labelColor, mainWnd, 2.0f);
         sizer->Add(mMotorTempText, items[7].first, items[7].second, wxEXPAND);
 
-        mMotorTempView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, whiteColor, mainWnd, 4.0f);
-        sizer->Add(mMotorTempView, items[10].first, items[10].second, wxEXPAND);
+        mMotorTempView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, 4.0f);
+        sizer->Add(mMotorTempView->GetParent(), items[10].first, items[10].second, wxEXPAND);
 
         // MC STATE
-        mMcStateText = CreateTextHeader(this, "MC STATE", sizer->GetEmptyCellSize(), labelColor, labelBgrColor, mainWnd, 2.0f);
+        mMcStateText = CreateTextHeader(this, "MC STATE", sizer->GetEmptyCellSize(), labelColor, mainWnd, 2.0f);
         sizer->Add(mMcStateText, items[8].first, items[8].second, wxEXPAND);
 
-        mMcStateView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, whiteColor, mainWnd, 4.0f);
-        sizer->Add(mMcStateView, items[11].first, items[11].second, wxEXPAND);
+        mMcStateView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, 4.0f);
+        sizer->Add(mMcStateView->GetParent(), items[11].first, items[11].second, wxEXPAND);
 
         // VCU STATE
-        mVcuStateText = CreateTextHeader(this, "STATE", sizer->GetEmptyCellSize(), labelColor, labelBgrColor, mainWnd, 2.0f);
+        mVcuStateText = CreateTextHeader(this, "STATE", sizer->GetEmptyCellSize(), labelColor, mainWnd, 2.0f);
         sizer->Add(mVcuStateText, items[12].first, items[12].second, wxEXPAND);
 
-        mVcuStateView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, whiteColor, mainWnd, 4.0f);
-        sizer->Add(mVcuStateView, items[15].first, items[9].second, wxEXPAND);
+        mVcuStateView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, 4.0f);
+        sizer->Add(mVcuStateView->GetParent(), items[15].first, items[9].second, wxEXPAND);
 
         // GLV V
-        mGlvVoltText = CreateTextHeader(this, "GLV V", sizer->GetEmptyCellSize(), labelColor, labelBgrColor, mainWnd, 2.0f);
+        mGlvVoltText = CreateTextHeader(this, "GLV V", sizer->GetEmptyCellSize(), labelColor, mainWnd, 2.0f);
         sizer->Add(mGlvVoltText, items[13].first, items[13].second, wxEXPAND);
 
-        mGlvVoltView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, whiteColor, mainWnd, 4.0f);
-        sizer->Add(mGlvVoltView, items[16].first, items[16].second, wxEXPAND);
+        mGlvVoltView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, 4.0f);
+        sizer->Add(mGlvVoltView->GetParent(), items[16].first, items[16].second, wxEXPAND);
 
         // DEBUG
         // NOTE: you don't currently use the free slot for anything.
         // If you'd like to add something, then just update the code in the handler callbacks.
-        mDebugText = CreateTextHeader(this, "DEBUG (TEST)", sizer->GetEmptyCellSize(), labelColor, labelBgrColor, mainWnd, 2.0f);
+        mDebugText = CreateTextHeader(this, "DEBUG (TEST)", sizer->GetEmptyCellSize(), labelColor, mainWnd, 2.0f);
         sizer->Add(mDebugText, items[14].first, items[14].second, wxEXPAND);
 
-        mDebugView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, whiteColor, mainWnd, 4.0f);
-        sizer->Add(mDebugView, items[17].first, items[17].second, wxEXPAND);
+        mDebugView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, 4.0f);
+        sizer->Add(mDebugView->GetParent(), items[17].first, items[17].second, wxEXPAND);
 
         sizer->AddGrowableRow(0, 1);
         sizer->AddGrowableRow(1, 3);

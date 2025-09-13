@@ -10,12 +10,11 @@ namespace frucd
 {
     class MainWindow;
 
-    wxTextCtrl* CreateTextHeader(
+    wxStaticText* CreateTextHeader(
         wxWindow* parent,
         std::string_view title,
         wxSize size,
         wxColor fgColor,
-        wxColor bgColor,
         MainWindow* wnd,
         float fontScale
     );
@@ -24,11 +23,9 @@ namespace frucd
         wxWindow* parent,
         std::string_view defaultText,
         wxSize size,
-        wxColor fgColor,
-        wxColor bgColor,
+        wxColour fgColor,
         MainWindow* wnd,
-        float fontScale
-    );
+        float fontScale);
     
     std::optional<std::string> GetStringEncoding(const dbcppp::ISignal& sig, int64_t value);
 }

@@ -49,6 +49,8 @@ namespace frucd
         mGaugePanel->Bind(wxEVT_KEY_DOWN, &MainWindow::OnKeyDown, this);
         mGaugePanel->Bind(wxEVT_UPDATE_UI, &MainWindow::OnUpdateUI, this);
         mGaugePanel->Bind(wxEVT_IDLE, &MainWindow::OnUpdate, this);
+
+        ShowFullScreen(true);
     }
 
     void MainWindow::OnUpdateUI(wxUpdateUIEvent& e)

@@ -4,21 +4,32 @@
 
 namespace frucd
 {
-    wxTextCtrl* CreateTextHeader(
+    wxStaticText* CreateTextHeader(
         wxWindow* parent,
         std::string_view title,
         wxSize size,
         wxColor fgColor,
-        wxColor bgColor,
         MainWindow* wnd,
         float fontScale)
     {
-        auto res = new wxTextCtrl(parent, wxID_ANY, title.data(), wxDefaultPosition, size, wxTE_READONLY | wxTE_CENTRE);
+        auto res = new wxStaticText(
+            parent,
+            wxID_ANY,
+            title.data(),
+            wxDefaultPosition,
+            wxDefaultSize,
+            wxALIGN_CENTER_HORIZONTAL
+        );
+
         res->SetForegroundColour(fgColor);
-        res->SetBackgroundColour(bgColor);
         res->Bind(wxEVT_KEY_UP, &MainWindow::OnKeyUp, wnd);
         res->Bind(wxEVT_KEY_DOWN, &MainWindow::OnKeyDown, wnd);
-        res->SetFont(res->GetFont().Scale(fontScale));
+
+        wxFont font(wxFontInfo(int(10 * fontScale))
+                        .Family(wxFONTFAMILY_DEFAULT)
+                        .Weight(wxFONTWEIGHT_BOLD));
+        res->SetFont(font);
+
         return res;
     }
 
@@ -26,18 +37,37 @@ namespace frucd
         wxWindow* parent,
         std::string_view defaultText,
         wxSize size,
-        wxColor fgColor,
-        wxColor bgColor,
+        wxColour fgColor,
         MainWindow* wnd,
         float fontScale)
     {
-        auto res = new wxStaticText(parent, wxID_ANY, defaultText.data(), wxDefaultPosition, size, wxALIGN_CENTER_HORIZONTAL | wxST_NO_AUTORESIZE);
-        res->SetForegroundColour(fgColor);
-        res->SetBackgroundColour(bgColor);
-        res->Bind(wxEVT_KEY_UP, &MainWindow::OnKeyUp, wnd);
-        res->Bind(wxEVT_KEY_DOWN, &MainWindow::OnKeyDown, wnd);
-        res->SetFont(res->GetFont().Scale(fontScale));
-        return res;
+        auto panel = new wxPanel(parent);
+        panel->SetBackgroundColour(wxColor(255, 255, 255));
+
+        auto sizer = new wxBoxSizer(wxVERTICAL);
+
+        auto text = new wxStaticText(
+            panel,
+            wxID_ANY,
+            defaultText.data(),
+            wxDefaultPosition,
+            wxDefaultSize,
+            wxALIGN_CENTER_HORIZONTAL
+        );
+        text->SetForegroundColour(fgColor);
+
+        wxFont font(wxFontInfo(int(10 * fontScale))
+                        .Family(wxFONTFAMILY_DEFAULT)
+                        .Weight(wxFONTWEIGHT_BOLD));
+        text->SetFont(font);
+
+        sizer->AddStretchSpacer(1);
+        sizer->Add(text, 0, wxALIGN_CENTER);
+        sizer->AddStretchSpacer(1);
+
+        panel->SetSizer(sizer);
+
+        return text;
     }
 
     std::optional<std::string> GetStringEncoding(const dbcppp::ISignal& sig, int64_t value)

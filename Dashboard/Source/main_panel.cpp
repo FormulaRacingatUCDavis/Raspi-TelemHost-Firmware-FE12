@@ -36,61 +36,56 @@ namespace frucd
         , mMainSizer(new wxBoxSizer(wxVERTICAL))
         , mMainWindow(mainWnd)
     {
-        const int margin = FromDIP(20);
-        const int marginHz = FromDIP(40);
+
+        const float tFontScale = 5.0f;
+        const float vFontScale = 8.0f;
 
         const wxColor blackColor = wxColor(10, 10, 10);
-        const wxColor labelBgrColor = blackColor; //wxColor(100, 100, 100);
         const wxColor labelColor = wxColor(255, 255, 100);
         
         SetBackgroundColour(blackColor);
 
-        auto sizer = new wxGridBagSizer(margin, marginHz);
-                
-        std::vector<std::pair<wxGBPosition, wxGBSpan>> items =
-        {
-            {{0, 0}, {1, 1}},
-            {{0, 1}, {1, 1}},
-            {{1, 0}, {2, 1}},
-            {{1, 1}, {1, 1}},
-            {{2, 1}, {1, 1}},
+        auto sizer = new wxGridBagSizer(FromDIP(20), FromDIP(40));
 
-            {{3, 0}, {1, 1}},
-            {{3, 1}, {1, 1}},
-            {{4, 0}, {2, 1}},
-            {{4, 1}, {2, 1}},
-        };
+        /*
+        Grid:
+            MPH         SOC
+            MPH VIEW    SOC VIEW
+            MPH VIEW    TEMP VIEW
+            STATE       GLV
+            STATE VIEW  GLV VIEW
+        */
 
         // MPH
-        mMphText = CreateTextHeader(this, "MPH", sizer->GetEmptyCellSize(), labelColor, labelBgrColor, mainWnd, 2.0f);
-        sizer->Add(mMphText, items[0].first, items[0].second, wxEXPAND);
+        mMphText = CreateTextHeader(this, "MPH", sizer->GetEmptyCellSize(), labelColor, mainWnd, tFontScale);
+        sizer->Add(mMphText, wxGBPosition(0,0), wxGBSpan(1,1), wxALIGN_CENTER, 0); 
 
-        mMphView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, gDodgerBlue, mainWnd, 7.0f);
-        sizer->Add(mMphView, items[2].first, items[2].second, wxEXPAND);
+        mMphView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, 15.0f);
+        sizer->Add(mMphView->GetParent(), wxGBPosition(1,0), wxGBSpan(2,1), wxEXPAND);
 
-        // PACK SOCIT
-        mPackSocitText = CreateTextHeader(this, "PACK SOCIT", sizer->GetEmptyCellSize(), labelColor, labelBgrColor, mainWnd, 2.0f);
-        sizer->Add(mPackSocitText, items[1].first, items[1].second, wxEXPAND);
+        // SOC + TEMP
+        mPackSocitText = CreateTextHeader(this, "PACK SOCIT", sizer->GetEmptyCellSize(), labelColor, mainWnd, tFontScale);
+        sizer->Add(mPackSocitText, wxGBPosition(0,1), wxGBSpan(1,1), wxALIGN_CENTER, 0);
 
-        mSocView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, gDodgerBlue, mainWnd, 4.0f);
-        sizer->Add(mSocView, items[3].first, items[3].second, wxEXPAND);
+        mSocView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, vFontScale);
+        sizer->Add(mSocView->GetParent(), wxGBPosition(1, 1), wxGBSpan(1, 1), wxEXPAND);
 
-        mTempView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, gDodgerBlue, mainWnd, 4.0f);
-        sizer->Add(mTempView, items[4].first, items[4].second, wxEXPAND);
+        mTempView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, vFontScale);
+        sizer->Add(mTempView->GetParent(), wxGBPosition(2, 1), wxGBSpan(1, 1), wxEXPAND);
 
         // STATE
-        mStateText = CreateTextHeader(this, "STATE", sizer->GetEmptyCellSize(), labelColor, labelBgrColor, mainWnd, 2.0f);
-        sizer->Add(mStateText, items[5].first, items[5].second, wxEXPAND);
+        mStateText = CreateTextHeader(this, "STATE", sizer->GetEmptyCellSize(), labelColor, mainWnd, tFontScale);
+        sizer->Add(mStateText, wxGBPosition(3,0), wxGBSpan(1,1), wxALIGN_CENTER, 0); 
 
-        mStateView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, gDodgerBlue, mainWnd, 4.0f);
-        sizer->Add(mStateView, items[7].first, items[7].second, wxEXPAND);
+        mStateView = CreateTextView(this, "STARTUP", sizer->GetEmptyCellSize(), blackColor, mainWnd, vFontScale);
+        sizer->Add(mStateView->GetParent(), wxGBPosition(4, 0), wxGBSpan(2, 1), wxEXPAND);
 
         // GLV VOLTAGE
-        mGlvVoltageText = CreateTextHeader(this, "GLV V", sizer->GetEmptyCellSize(), labelColor, labelBgrColor, mainWnd, 2.0f);
-        sizer->Add(mGlvVoltageText, items[6].first, items[6].second, wxEXPAND);
+        mGlvVoltageText = CreateTextHeader(this, "GLV V", sizer->GetEmptyCellSize(), labelColor, mainWnd, tFontScale);
+        sizer->Add(mGlvVoltageText, wxGBPosition(3, 1), wxGBSpan(1, 1), wxALIGN_CENTER, 0);
 
-        mGlvVoltageView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, gDodgerBlue, mainWnd, 4.0f);
-        sizer->Add(mGlvVoltageView, items[8].first, items[8].second, wxEXPAND);
+        mGlvVoltageView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, vFontScale);
+        sizer->Add(mGlvVoltageView->GetParent(), wxGBPosition(4, 1), wxGBSpan(2, 1), wxEXPAND);
 
         sizer->AddGrowableRow(0, 1);
         sizer->AddGrowableRow(1, 3);
@@ -106,9 +101,7 @@ namespace frucd
 
         SetSizer(sizer);
 
-        const int overallMarginHz = FromDIP(200);
-        mMainSizer->Add(this, 1, wxEXPAND | wxALL, margin);
-        //mMainSizer->Add(this, 1, wxEXPAND | wxLEFT | wxRIGHT, overallMarginHz);
+        mMainSizer->Add(this, 1, wxEXPAND | wxALL, FromDIP(20));
 
         telem.RegisterCanObserver(
             [this](const dbcppp::IMessage& msg, const dbcppp::INetwork& net, const can_frame& frame)
@@ -126,7 +119,7 @@ namespace frucd
     {
         // BMS faults over VCU
         std::string resState;
-        wxColor resColor = gRed;
+        wxColor resColor = gOrangeRed;
 
         if (vcuState == mVcuState && bmsState == mBmsState)
         {
@@ -171,7 +164,8 @@ namespace frucd
         }
 
         mStateView->SetLabel(resState);
-        mStateView->SetBackgroundColour(resColor);
+        mStateView->GetParent()->Layout();
+        mStateView->GetParent()->SetBackgroundColour(resColor);
     }
 
     void MainPanel::UpdateTemp(double motorTemp, double mcTemp, double packTemp, double soc)
@@ -182,6 +176,8 @@ namespace frucd
         mSoc = soc;
 
         mSocView->SetLabel(std::to_string((int32_t)std::round(mSoc)));
+        mSocView->GetParent()->Layout();
+        mSocView->GetParent()->SetBackgroundColour(gOrangeRed);
 
         double maxTemp = mMotorTemp;
         wxColor resColor = mMotorTemp < 45 ? gLawnGreen : (mMotorTemp < 50 ? gYellow : gOrangeRed);
@@ -204,7 +200,8 @@ namespace frucd
         str << ((int32_t)std::round(maxTemp)) << 'C';
 
         mTempView->SetLabel(str.str());
-        mTempView->SetBackgroundColour(resColor);
+        mTempView->GetParent()->Layout();
+        mTempView->GetParent()->SetBackgroundColour(resColor);
     }
 
     void MainPanel::UpdateSpeed(double speedRpm)
@@ -215,6 +212,8 @@ namespace frucd
         double speedMph = mSpeedRpm * circumference * 60.0 / 63360.0;
 
         mMphView->SetLabel(std::to_string((int32_t)std::round(speedMph)));
+        mMphView->GetParent()->Layout();
+        mMphView->GetParent()->SetBackgroundColour(gDodgerBlue);
     }
 
     void MainPanel::UpdateGlv(double glvVoltage)
@@ -232,6 +231,8 @@ namespace frucd
         std::ostringstream str;
         str << std::fixed << std::setprecision(2) << mGlvVoltage;
         mGlvVoltageView->SetLabel(str.str());
+        mGlvVoltageView->GetParent()->Layout();
+        mGlvVoltageView->GetParent()->SetBackgroundColour(resColor);
         mGlvVoltageView->SetBackgroundColour(resColor);
     }
 

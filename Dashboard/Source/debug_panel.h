@@ -25,31 +25,31 @@ namespace frucd
     private:
         wxSizer* mMainSizer;
 
-        wxTextCtrl* mSocText;
+        wxStaticText* mSocText;
         wxStaticText* mSocView;
 
-        wxTextCtrl* mPackTempText;
+        wxStaticText* mPackTempText;
         wxStaticText* mPackTempView;
 
-        wxTextCtrl* mShutdownText;
+        wxStaticText* mShutdownText;
         wxStaticText* mShutdownView;
 
-        wxTextCtrl* mMcTempText;
+        wxStaticText* mMcTempText;
         wxStaticText* mMcTempView;
 
-        wxTextCtrl* mMotorTempText;
+        wxStaticText* mMotorTempText;
         wxStaticText* mMotorTempView;
 
-        wxTextCtrl* mMcStateText;
+        wxStaticText* mMcStateText;
         wxStaticText* mMcStateView;
 
-        wxTextCtrl* mVcuStateText;
+        wxStaticText* mVcuStateText;
         wxStaticText* mVcuStateView;
 
-        wxTextCtrl* mGlvVoltText;
+        wxStaticText* mGlvVoltText;
         wxStaticText* mGlvVoltView;
 
-        wxTextCtrl* mDebugText;
+        wxStaticText* mDebugText;
         wxStaticText* mDebugView;
     };
 }
