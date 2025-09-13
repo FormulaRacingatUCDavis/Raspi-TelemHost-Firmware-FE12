@@ -32,6 +32,8 @@ namespace frucd
         MainWindow* mMainWindow;
         
         wxStaticText* mPercentView;
+        wxStaticText* mTest1;
+        wxStaticText* mTest2;
 
         wxPanel* mPercentFg;
         wxPanel* mPercentBg;

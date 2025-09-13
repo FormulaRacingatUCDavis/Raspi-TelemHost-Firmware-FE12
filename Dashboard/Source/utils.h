@@ -14,7 +14,6 @@ namespace frucd
         wxWindow* parent,
         std::string_view title,
         wxSize size,
-        wxColor fgColor,
         MainWindow* wnd,
         float fontScale
     );
@@ -23,7 +22,6 @@ namespace frucd
         wxWindow* parent,
         std::string_view defaultText,
         wxSize size,
-        wxColour fgColor,
         MainWindow* wnd,
         float fontScale);
     

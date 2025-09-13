@@ -39,11 +39,8 @@ namespace frucd
 
         const float tFontScale = 5.0f;
         const float vFontScale = 8.0f;
-
-        const wxColor blackColor = wxColor(0, 0, 0);
-        const wxColor labelColor = wxColor(255, 255, 100);
         
-        SetBackgroundColour(blackColor);
+        SetBackgroundColour(wxColor(0, 0, 0));
 
         auto sizer = new wxGridBagSizer(FromDIP(20), FromDIP(40));
 
@@ -57,34 +54,34 @@ namespace frucd
         */
 
         // MPH
-        mMphText = CreateTextHeader(this, "MPH", sizer->GetEmptyCellSize(), labelColor, mainWnd, tFontScale);
-        sizer->Add(mMphText, wxGBPosition(0,0), wxGBSpan(1,1), wxALIGN_CENTER, 0); 
+        mMphText = CreateTextHeader(this, "MPH", sizer->GetEmptyCellSize(), mainWnd, tFontScale);
+        sizer->Add(mMphText->GetParent(), wxGBPosition(0, 0), wxGBSpan(1, 1), wxEXPAND);
 
-        mMphView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, 15.0f);
-        sizer->Add(mMphView->GetParent(), wxGBPosition(1,0), wxGBSpan(2,1), wxEXPAND);
+        mMphView = CreateTextView(this, "", sizer->GetEmptyCellSize(), mainWnd, 15.0f);
+        sizer->Add(mMphView->GetParent(), wxGBPosition(1, 0), wxGBSpan(2, 1), wxEXPAND);
 
         // SOC + TEMP
-        mPackSocitText = CreateTextHeader(this, "PACK SOCIT", sizer->GetEmptyCellSize(), labelColor, mainWnd, tFontScale);
-        sizer->Add(mPackSocitText, wxGBPosition(0,1), wxGBSpan(1,1), wxALIGN_CENTER, 0);
+        mPackSocitText = CreateTextHeader(this, "PACK SOCIT", sizer->GetEmptyCellSize(), mainWnd, tFontScale);
+        sizer->Add(mPackSocitText->GetParent(), wxGBPosition(0, 1), wxGBSpan(1, 1), wxEXPAND);
 
-        mSocView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, vFontScale);
+        mSocView = CreateTextView(this, "", sizer->GetEmptyCellSize(), mainWnd, vFontScale);
         sizer->Add(mSocView->GetParent(), wxGBPosition(1, 1), wxGBSpan(1, 1), wxEXPAND);
 
-        mTempView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, vFontScale);
+        mTempView = CreateTextView(this, "", sizer->GetEmptyCellSize(), mainWnd, vFontScale);
         sizer->Add(mTempView->GetParent(), wxGBPosition(2, 1), wxGBSpan(1, 1), wxEXPAND);
 
         // STATE
-        mStateText = CreateTextHeader(this, "STATE", sizer->GetEmptyCellSize(), labelColor, mainWnd, tFontScale);
-        sizer->Add(mStateText, wxGBPosition(3,0), wxGBSpan(1,1), wxALIGN_CENTER, 0); 
+        mStateText = CreateTextHeader(this, "STATE", sizer->GetEmptyCellSize(), mainWnd, tFontScale);
+        sizer->Add(mStateText->GetParent(), wxGBPosition(3, 0), wxGBSpan(1, 1), wxEXPAND);
 
-        mStateView = CreateTextView(this, "STARTUP", sizer->GetEmptyCellSize(), blackColor, mainWnd, vFontScale);
+        mStateView = CreateTextView(this, "STARTUP", sizer->GetEmptyCellSize(), mainWnd, vFontScale);
         sizer->Add(mStateView->GetParent(), wxGBPosition(4, 0), wxGBSpan(2, 1), wxEXPAND);
 
         // GLV VOLTAGE
-        mGlvVoltageText = CreateTextHeader(this, "GLV V", sizer->GetEmptyCellSize(), labelColor, mainWnd, tFontScale);
-        sizer->Add(mGlvVoltageText, wxGBPosition(3, 1), wxGBSpan(1, 1), wxALIGN_CENTER, 0);
+        mGlvVoltageText = CreateTextHeader(this, "GLV V", sizer->GetEmptyCellSize(), mainWnd, tFontScale);
+        sizer->Add(mGlvVoltageText->GetParent(), wxGBPosition(3, 1), wxGBSpan(1, 1), wxEXPAND);
 
-        mGlvVoltageView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, vFontScale);
+        mGlvVoltageView = CreateTextView(this, "", sizer->GetEmptyCellSize(), mainWnd, vFontScale);
         sizer->Add(mGlvVoltageView->GetParent(), wxGBPosition(4, 1), wxGBSpan(2, 1), wxEXPAND);
 
         sizer->AddGrowableRow(0, 1);

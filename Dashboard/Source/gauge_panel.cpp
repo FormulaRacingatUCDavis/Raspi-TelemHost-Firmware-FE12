@@ -19,52 +19,33 @@
 
 namespace frucd
 {
-    static const wxColor blackColor = wxColor(10, 10, 10);
-
     GaugePanel::GaugePanel(MainWindow* mainWnd, Telem& telem)
         : wxPanel(mainWnd, wxID_ANY)
         , mMainWindow(mainWnd)
         , mMainSizer(new wxBoxSizer(wxVERTICAL))
-    {
-        const int margin = FromDIP(20);
-        const int marginHz = FromDIP(40);
+    {   
+        SetBackgroundColour(wxColor(0, 0, 0));
 
-        const wxColor labelBgrColor = blackColor; //wxColor(100, 100, 100);
-        const wxColor labelColor = wxColor(255, 255, 100);
-        
-        SetBackgroundColour(gOrange);
+        auto sizer = new wxGridBagSizer(0, 0);
 
-        auto sizer = new wxGridBagSizer(margin, marginHz);
-        std::vector<std::pair<wxGBPosition, wxGBSpan>> items =
-        {
-            {{0, 0}, {1, 1}},
-            {{0, 1}, {1, 1}}
-        };
+        mTest1 = CreateTextView(this, "TEST1", sizer->GetEmptyCellSize(), mainWnd, 20.0f);
+        sizer->Add(mTest1->GetParent(), wxGBPosition(0, 0), wxGBSpan(2, 1), wxEXPAND);
+        mTest1->GetParent()->SetBackgroundColour(gDodgerBlue);
 
-        mPercentView = CreateTextView(this, "", sizer->GetEmptyCellSize(), blackColor, mainWnd, 4.0f);
-        sizer->Add(mPercentView->GetParent(), items[0].first, items[0].second, wxEXPAND);
+        mTest2 = CreateTextView(this, "TEST2", sizer->GetEmptyCellSize(), mainWnd, 2.0f);
+        sizer->Add(mTest2->GetParent(), wxGBPosition(0, 1), wxGBSpan(2, 1), wxEXPAND);
+        mTest2->GetParent()->SetBackgroundColour(gRed);
 
-        mPercentBg = new wxPanel(this, wxID_ANY);
-        mPercentBg->SetBackgroundColour(gOrange);
-        sizer->Add(mPercentBg, items[1].first, items[1].second, wxEXPAND);
-
-        mPercentFg = new wxPanel(
-            mPercentBg,
-            wxID_ANY
-        );
-        mPercentFg->SetBackgroundColour(blackColor);
-
-        sizer->AddGrowableRow(0, 1);
-
-        sizer->AddGrowableCol(0, 1);
-        sizer->AddGrowableCol(1, 2);
+        sizer->AddGrowableRow(0);
+        sizer->AddGrowableRow(1);
+        sizer->AddGrowableCol(0);
+        sizer->AddGrowableCol(1);
 
         sizer->SetMinSize(FromDIP(wxSize(600, 400)));
 
         SetSizer(sizer);
 
-        const int overallMarginHz = FromDIP(200);
-        mMainSizer->Add(this, 1, wxEXPAND | wxALL, margin);
+        mMainSizer->Add(this, 1, wxEXPAND, 0);
 
         telem.RegisterCanObserver(
             [this](const dbcppp::IMessage& msg, const dbcppp::INetwork& net, const can_frame& frame)
@@ -79,67 +60,13 @@ namespace frucd
 
     void GaugePanel::UpdateKnobs(double knob1, double knob2)
     {
-        static bool isOn = false;
-        static auto lastTime = std::chrono::high_resolution_clock::now();
         
-        constexpr double adcMax = 4095.0;
-        constexpr float gaugePopupDuration = 2.0;
-
-        int knob1Percent = (knob1 / adcMax) * 100.0;
-        int knob2Percent = (knob2 / adcMax) * 100.0;
-        if (knob1Percent != mKnob1Percent)
-        {
-            mKnob1Percent = knob1Percent;
-            mPercentView->SetLabel(std::to_string(mKnob1Percent) + "%");
-            mMainWindow->SetMode(2); // TODO: use cleaner method
-            // Set up gauge window, color
-            isOn = true;
-            lastTime = std::chrono::high_resolution_clock::now();
-        }
-        else if (knob2Percent != mKnob2Percent)
-        {
-            mKnob2Percent = knob2Percent;
-            mPercentView->SetLabel(std::to_string(mKnob2Percent) + "%");
-            mMainWindow->SetMode(2); // TODO: use cleaner method
-            // Set up gauge window, color
-            isOn = true;
-            lastTime = std::chrono::high_resolution_clock::now();
-        }
-        else
-        {
-            if (isOn)
-            {
-                auto currentTime = std::chrono::high_resolution_clock::now();
-                if (float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - lastTime).count();
-                    time >= gaugePopupDuration)
-                {
-                    mMainWindow->SetMode(0); // TODO: could pop the window, but this should work fine
-                    isOn = false;
-                }
-            }
-        }
     }
 
     void GaugePanel::OnFeCan(const dbcppp::IMessage& msg, const dbcppp::INetwork& net, const can_frame& frame)
     {
 #ifdef FRUCD_USE_RASPI
-        // TODO: slowish decoding, made for ease of use and compatibility w python variant - could be optimized
-        std::unordered_map<std::string, std::pair<const dbcppp::ISignal*, double>> sigMap;
-        for (const dbcppp::ISignal& sig : msg.Signals())
-        {
-            const auto* muxSignal = msg.MuxSignal();
-            if (sig.MultiplexerIndicator() != dbcppp::ISignal::EMultiplexer::MuxValue ||
-                (muxSignal && muxSignal->Decode(frame.data) == sig.MultiplexerSwitchValue()))
-            {
-                //for (const auto& e : sig.ValueEncodingDescriptions()) std::cerr << e.Description() << std::endl;
-                sigMap[sig.Name()] = std::make_pair(&sig, sig.RawToPhys(sig.Decode(frame.data)));
-            }
-        }
 
-        if (msg.Name() == "Dashboard_Knobs")
-        {
-            UpdateKnobs(sigMap["Knob1"].second, sigMap["Knob2"].second);
-        }
 #endif
     }
 }

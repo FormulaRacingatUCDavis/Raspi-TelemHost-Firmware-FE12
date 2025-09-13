@@ -4,40 +4,52 @@
 
 namespace frucd
 {
-    wxStaticText* CreateTextHeader(
+    wxStaticText* CreateTextHeader
+    (
         wxWindow* parent,
         std::string_view title,
         wxSize size,
-        wxColor fgColor,
         MainWindow* wnd,
-        float fontScale)
+        float fontScale
+    )
     {
-        auto res = new wxStaticText(
-            parent,
+        auto panel = new wxPanel(parent);
+        panel->SetMaxSize(size);
+
+        auto sizer = new wxBoxSizer(wxVERTICAL);
+
+        auto text = new wxStaticText(
+            panel,
             wxID_ANY,
             title.data(),
             wxDefaultPosition,
             wxDefaultSize,
-            wxALIGN_CENTER_HORIZONTAL
+            wxALIGN_CENTER_HORIZONTAL | wxST_NO_AUTORESIZE
         );
-
-        res->SetForegroundColour(fgColor);
 
         wxFont font(wxFontInfo(int(10 * fontScale))
                         .Family(wxFONTFAMILY_DEFAULT)
                         .Weight(wxFONTWEIGHT_BOLD));
-        res->SetFont(font);
+        text->SetFont(font);
+        text->SetForegroundColour(wxColour(255, 255, 100));
 
-        return res;
+        sizer->AddStretchSpacer(1);
+        sizer->Add(text, 0, wxALIGN_CENTER);
+        sizer->AddStretchSpacer(1);
+
+        panel->SetSizer(sizer);
+
+        return text;
     }
 
-    wxStaticText* CreateTextView(
+    wxStaticText* CreateTextView
+    (
         wxWindow* parent,
         std::string_view defaultText,
         wxSize size,
-        wxColour fgColor,
         MainWindow* wnd,
-        float fontScale)
+        float fontScale
+    )
     {
         auto panel = new wxPanel(parent);
         panel->SetBackgroundColour(wxColor(255, 255, 255));
@@ -52,18 +64,19 @@ namespace frucd
             wxDefaultSize,
             wxALIGN_CENTER_HORIZONTAL
         );
-        text->SetForegroundColour(fgColor);
 
         wxFont font(wxFontInfo(int(10 * fontScale))
                         .Family(wxFONTFAMILY_DEFAULT)
                         .Weight(wxFONTWEIGHT_BOLD));
         text->SetFont(font);
+        text->SetForegroundColour(wxColor(0, 0, 0));
 
         sizer->AddStretchSpacer(1);
         sizer->Add(text, 0, wxALIGN_CENTER);
         sizer->AddStretchSpacer(1);
 
         panel->SetSizer(sizer);
+        panel->SetMaxSize(size);
 
         return text;
     }
