@@ -281,7 +281,7 @@ namespace frucd
         else if (msg.Name() == "Dashboard_Knobs")
         {
             // TODO: Maybe make MainWindow an observer?
-            mMainWindow->SetMode(sigMap["Button"].second);
+            mMainWindow->SetMode(2);
         }
         else if (msg.Name() == "PEI_Status")
         {

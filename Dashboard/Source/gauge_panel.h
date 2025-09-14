@@ -19,26 +19,24 @@ namespace frucd
     public:
         GaugePanel(MainWindow* mainWnd, Telem& telem);
 
-        void UpdateKnobs(double knob1, double knob2);
+        void UpdateKnobs(double knob);
 
     public:
         inline wxSizer* GetSizer() { return mMainSizer; }
 
     private:
-        void OnFeCan(const dbcppp::IMessage& msg, const dbcppp::INetwork& net, const can_frame& frame);
-    
+        void OnFeCan(const dbcppp::IMessage& msg,
+                     const dbcppp::INetwork& net,
+                     const can_frame& frame);
+        void OnBarPaint(wxPaintEvent& evt);
+
     private:
         wxSizer* mMainSizer;
         MainWindow* mMainWindow;
-        
+
         wxStaticText* mPercentView;
-        wxStaticText* mTest1;
-        wxStaticText* mTest2;
+        wxPanel* mBarGauge;
 
-        wxPanel* mPercentFg;
-        wxPanel* mPercentBg;
-
-        int mKnob1Percent{0};
-        int mKnob2Percent{0};
+        int mKnob{0};
     };
 }

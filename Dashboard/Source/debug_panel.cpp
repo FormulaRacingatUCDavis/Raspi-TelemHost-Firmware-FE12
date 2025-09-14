@@ -163,7 +163,7 @@ namespace frucd
         }
         else if (msg.Name() == "PEI_Status")
         {
-            std::string shutdown = "NO_SHUTDOWN";
+            std::string shutdown = "NO SHUTDOWN";
             auto isState = [&sigMap](const std::string& state) { return sigMap.find(state) != sigMap.end() && sigMap[state].second == 0.0; };
             if (isState("PRECHARGE")) shutdown = "PRECHARGE";
             else if (isState("AIR_NEG")) shutdown = "AIR NEG";

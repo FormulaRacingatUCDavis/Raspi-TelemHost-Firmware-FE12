@@ -31,8 +31,8 @@ namespace frucd
         mMainSizer->Add(mPanelCollection, 1, wxEXPAND | wxALL, 0);
         SetSizerAndFit(mMainSizer);
 
-        // ShowMainPanel();
-        ShowDebugPanel();
+        ShowMainPanel();
+        // ShowDebugPanel();
         // ShowGaugePanel();
 
         ShowFullScreen(true);
