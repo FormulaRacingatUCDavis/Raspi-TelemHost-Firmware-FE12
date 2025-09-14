@@ -28,11 +28,11 @@ namespace frucd
 
         auto sizer = new wxGridBagSizer(0, 0);
 
-        mTest1 = CreateTextView(this, "TEST1", sizer->GetEmptyCellSize(), mainWnd, 20.0f);
+        mTest1 = CreateTextView(this, "TEST1", sizer->GetEmptyCellSize(), mainWnd, 9.0f);
         sizer->Add(mTest1->GetParent(), wxGBPosition(0, 0), wxGBSpan(2, 1), wxEXPAND);
         mTest1->GetParent()->SetBackgroundColour(gDodgerBlue);
 
-        mTest2 = CreateTextView(this, "TEST2", sizer->GetEmptyCellSize(), mainWnd, 2.0f);
+        mTest2 = CreateTextView(this, "TEST2", sizer->GetEmptyCellSize(), mainWnd, 9.0f);
         sizer->Add(mTest2->GetParent(), wxGBPosition(0, 1), wxGBSpan(2, 1), wxEXPAND);
         mTest2->GetParent()->SetBackgroundColour(gRed);
 

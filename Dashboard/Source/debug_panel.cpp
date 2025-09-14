@@ -25,8 +25,8 @@ namespace frucd
         , mMainSizer(new wxBoxSizer(wxVERTICAL))
     {
 
-        const float tFontScale = 5.0f;
-        const float vFontScale = 10.0f;
+        const float tFontScale = 2.5f;
+        const float vFontScale = 3.0f;
         
         SetBackgroundColour(wxColor(0, 0, 0));
 

@@ -37,8 +37,8 @@ namespace frucd
         , mMainWindow(mainWnd)
     {
 
-        const float tFontScale = 5.0f;
-        const float vFontScale = 8.0f;
+        const float tFontScale = 2.5f;
+        const float vFontScale = 3.0f;
         
         SetBackgroundColour(wxColor(0, 0, 0));
 
@@ -57,7 +57,7 @@ namespace frucd
         mMphText = CreateTextHeader(this, "MPH", sizer->GetEmptyCellSize(), mainWnd, tFontScale);
         sizer->Add(mMphText->GetParent(), wxGBPosition(0, 0), wxGBSpan(1, 1), wxEXPAND);
 
-        mMphView = CreateTextView(this, "", sizer->GetEmptyCellSize(), mainWnd, 15.0f);
+        mMphView = CreateTextView(this, "", sizer->GetEmptyCellSize(), mainWnd, 7.0f);
         sizer->Add(mMphView->GetParent(), wxGBPosition(1, 0), wxGBSpan(2, 1), wxEXPAND);
 
         // SOC + TEMP

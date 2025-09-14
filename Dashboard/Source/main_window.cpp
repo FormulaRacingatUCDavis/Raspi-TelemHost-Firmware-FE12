@@ -32,9 +32,11 @@ namespace frucd
         SetSizerAndFit(mMainSizer);
 
         // ShowMainPanel();
-        // ShowDebugPanel();
-        ShowGaugePanel();
+        ShowDebugPanel();
+        // ShowGaugePanel();
+
         ShowFullScreen(true);
+        wxWindow::SetCursor(wxCURSOR_BLANK);
     }
 
     void MainWindow::OnUpdateUI(wxUpdateUIEvent& e)
