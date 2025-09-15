@@ -10,7 +10,6 @@ NS_ :
     CAT_DEF_
     CAT_
     FILTER
-    BA_DEF_DEF_
     EV_DATA_
     ENVVAR_DATA_
     SGTYPE_
@@ -25,14 +24,14 @@ NS_ :
     BO_TX_BU_
     BA_DEF_REL_
     BA_REL_
-    BA_DEF_DEF_REL_
     BU_SG_REL_
     BU_EV_REL_
     BU_BO_REL_
     SG_MUL_VAL_
 
 BS_: 
-BU_: Dashboard PEI TelemNode INV 
+BU_: Dashboard PEI TelemNode 
+
 BO_ 1894 Dashboard_Vehicle_State: 7 Dashboard
    SG_ HV_Requested : 7|8@0+ (1,0) [0|1] "" Vector__XXX
    SG_ Throttle1_Level : 15|8@0+ (1,0) [0|100] "%" Vector__XXX
@@ -96,86 +95,13 @@ BO_ 1027 TelemNode_Strain_Gauges_Rear: 8 TelemNode
    SG_ RLUB_A_Arm_Strain_Gauge : 39|16@0+ (1,0) [0|65535] "" Vector__XXX
    SG_ RLLF_A_Arm_Strain_Gauge : 55|16@0+ (1,0) [0|65535] "" Vector__XXX
 
-BO_ 172 M172_Torque_And_Timer_Info: 8 INV
-   SG_ INV_Power_On_Timer : 32|32@1+ (0.003,0) [0|1.28848e+07] "time:second" Vector__XXX
-   SG_ INV_Torque_Feedback : 16|16@1- (0.1,0) [-3276.8|3276.7] "torque:N.m" Vector__XXX
-   SG_ INV_Commanded_Torque : 0|16@1- (0.1,0) [-3276.8|3276.7] "torque:N.m" Vector__XXX
-
-BO_ 171 M171_Fault_Codes: 8 INV
-   SG_ INV_Run_Fault_Hi : 48|16@1+ (1,0) [0|65535] "" Vector__XXX
-   SG_ INV_Post_Fault_Hi : 16|16@1+ (1,0) [0|65535] "" Vector__XXX
-   SG_ INV_Run_Fault_Lo : 32|16@1+ (1,0) [0|65535] "" Vector__XXX
-   SG_ INV_Post_Fault_Lo : 0|16@1+ (1,0) [0|65535] "" Vector__XXX
-
-BO_ 169 M169_Internal_Voltages: 8 INV
-   SG_ INV_Ref_Voltage_12_0 : 48|16@1- (0.01,0) [-327.68|327.67] "voltage:V" Vector__XXX
-   SG_ INV_Ref_Voltage_5_0 : 32|16@1- (0.01,0) [-327.68|327.67] "voltage:V" Vector__XXX
-   SG_ INV_Ref_Voltage_2_5 : 16|16@1- (0.01,0) [-327.68|327.67] "voltage:V" Vector__XXX
-   SG_ INV_Ref_Voltage_1_5 : 0|16@1- (0.01,0) [-327.68|327.67] "voltage:V" Vector__XXX
-
-BO_ 168 M168_Flux_ID_IQ_Info: 8 INV
-   SG_ INV_Iq : 48|16@1- (0.1,0) [-3276.8|3276.7] "current:A" Vector__XXX
-   SG_ INV_Id : 32|16@1- (0.1,0) [-3276.8|3276.7] "current:A" Vector__XXX
-   SG_ INV_Vq_ff : 16|16@1- (0.1,0) [-3276.7|3276.7] "voltage:V" Vector__XXX
-   SG_ INV_Vd_ff : 0|16@1- (0.1,0) [-3276.7|3276.7] "voltage:V" Vector__XXX
-
-BO_ 167 M167_Voltage_Info: 8 INV
-   SG_ INV_VBC_Vq_Voltage : 48|16@1- (0.1,0) [-3276.8|3276.7] "voltage:V" Vector__XXX
-   SG_ INV_VAB_Vd_Voltage : 32|16@1- (0.1,0) [-3276.8|3276.7] "voltage:V" Vector__XXX
-   SG_ INV_Output_Voltage : 16|16@1- (0.1,0) [-3276.8|3276.7] "voltage:V" Vector__XXX
-   SG_ INV_DC_Bus_Voltage : 0|16@1- (0.1,0) [-3276.8|3276.7] "voltage:V" Vector__XXX
-
-BO_ 166 M166_Current_Info: 8 INV
-   SG_ INV_DC_Bus_Current : 48|16@1- (0.1,0) [-3276.8|3276.7] "current:A" Vector__XXX
-   SG_ INV_Phase_C_Current : 32|16@1- (0.1,0) [-3276.8|3276.7] "current:A" Vector__XXX
-   SG_ INV_Phase_B_Current : 16|16@1- (0.1,0) [-3276.8|3276.7] "current:A" Vector__XXX
-   SG_ INV_Phase_A_Current : 0|16@1- (0.1,0) [-3276.8|3276.7] "current:A" Vector__XXX
-
-BO_ 165 M165_Motor_Position_Info: 8 INV
-   SG_ INV_Delta_Resolver_Filtered : 48|16@1- (0.1,0) [-3276.8|3276.7] "angle:deg" Vector__XXX
-   SG_ INV_Electrical_Output_Frequency : 32|16@1- (0.1,0) [-3276.8|3276.7] "frequency:Hz" Vector__XXX
-   SG_ INV_Motor_Speed : 16|16@1- (1,0) [-32768|32767] "angular_speed:rpm" Vector__XXX
-   SG_ INV_Motor_Angle_Electrical : 0|16@1+ (0.1,0) [0|6553.5] "angle:deg" Vector__XXX
-
-BO_ 164 M164_Digital_Input_Status: 8 INV
-   SG_ INV_Digital_Input_5 : 32|1@1+ (1,0) [0|1] "" Vector__XXX
-   SG_ INV_Digital_Input_4 : 24|1@1+ (1,0) [0|1] "" Vector__XXX
-   SG_ INV_Digital_Input_3 : 16|1@1+ (1,0) [0|1] "" Vector__XXX
-   SG_ INV_Digital_Input_2 : 8|1@1+ (1,0) [0|1] "" Vector__XXX
-   SG_ INV_Digital_Input_1 : 0|1@1+ (1,0) [0|1] "" Vector__XXX
-   SG_ INV_Digital_Input_6 : 40|1@1+ (1,0) [0|1] "" Vector__XXX
-   SG_ INV_Digital_Input_7 : 48|1@1+ (1,0) [0|1] "" Vector__XXX
-   SG_ INV_Digital_Input_8 : 56|1@1+ (1,0) [0|1] "" Vector__XXX
-
-BO_ 163 M163_Analog_Input_Voltages: 8 INV
-   SG_ INV_Analog_Input_1 : 0|10@1+ (0.01,0) [0|10.23] "voltage:V" Vector__XXX
-   SG_ INV_Analog_Input_2 : 10|10@1+ (0.01,0) [0|10.23] "voltage:V" Vector__XXX
-   SG_ INV_Analog_Input_3 : 20|10@1+ (0.01,0) [0|10.23] "voltage:V" Vector__XXX
-   SG_ INV_Analog_Input_4 : 32|10@1+ (0.01,0) [0|10.23] "voltage:V" Vector__XXX
-   SG_ INV_Analog_Input_5 : 42|10@1+ (0.01,0) [0|10.23] "voltage:V" Vector__XXX
-   SG_ INV_Analog_Input_6 : 52|10@1+ (0.01,0) [0|10.23] "voltage:V" Vector__XXX
-
-BO_ 162 M162_Temperature_Set_3: 8 INV
-   SG_ INV_Torque_Shudder : 48|16@1- (0.1,0) [-3276.8|3276.7] "torque:N.m" Vector__XXX
-   SG_ INV_Motor_Temp : 32|16@1- (0.1,0) [-3276.8|3276.7] "temperature:C" Vector__XXX
-   SG_ INV_Hot_Spot_Temp : 16|16@1- (0.1,0) [-3276.8|3276.7] "temperature:C" Vector__XXX
-   SG_ INV_Coolant_Temp : 0|16@1- (0.1,0) [-3276.8|3276.7] "temperature:C" Vector__XXX
-
-BO_ 161 M161_Temperature_Set_2: 8 INV
-   SG_ INV_RTD2_Temperature : 32|16@1- (0.1,0) [-3276.8|3276.7] "temperature:C" Vector__XXX
-   SG_ INV_RTD1_Temperature : 16|16@1- (0.1,0) [-3276.8|3276.7] "temperature:C" Vector__XXX
-   SG_ INV_Control_Board_Temp : 0|16@1- (0.1,0) [-3276.8|3276.7] "temperature:C" Vector__XXX
-   SG_ INV_Stall_Burst_Model_Temp : 48|16@1- (0.1,0) [-3276.8|3276.7] "temperature:C" Vector__XXX
-
-BO_ 160 M160_Temperature_Set_1: 8 INV
-   SG_ INV_Gate_Driver_Board_Temp : 48|16@1- (0.1,0) [-3276.8|3276.7] "temperature:C" Vector__XXX
-   SG_ INV_Module_C_Temp : 32|16@1- (0.1,0) [-3276.8|3276.7] "temperature:C" Vector__XXX
-   SG_ INV_Module_B_Temp : 16|16@1- (0.1,0) [-3276.8|3276.7] "temperature:C" Vector__XXX
-   SG_ INV_Module_A_Temp : 0|16@1- (0.1,0) [-3276.8|3276.7] "temperature:C" Vector__XXX
-
-BO_ 2147484929 Dashboard_Knobs: 4 Dashboard
-   SG_ Knob1 : 7|16@0+ (1,0) [0|4095] "" Vector__XXX
-   SG_ Knob2 : 23|16@0+ (1,0) [0|4095] "" Vector__XXX
+BO_ 1281 Dashboard_Inputs: 3 Dashboard
+   SG_ Knob1        : 7|8@0+  (1,0) [0|100] "" Vector__XXX
+   SG_ Knob2        : 15|8@0+ (1,0) [0|100] "" Vector__XXX
+   SG_ OVERTAKE     : 16|1@0+ (1,0) [0|1]   "" Vector__XXX
+   SG_ MARKER       : 17|1@0+ (1,0) [0|1]   "" Vector__XXX
+   SG_ TC           : 18|1@0+ (1,0) [0|1]   "" Vector__XXX
+   SG_ DISPLAY_MODE : 20|2@0+ (1,0) [0|3]   "" Vector__XXX
 
 BA_DEF_ BO_ "GenMsgBackgroundColor" STRING ;
 BA_DEF_ BO_ "GenMsgForegroundColor" STRING ;
@@ -183,88 +109,13 @@ BA_DEF_ BO_ "matchingcriteria" INT 0 0;
 BA_DEF_ BO_ "filterlabeling" INT 0 0;
 BA_DEF_ BO_ "GenMsgCycleTime" INT 0 100000;
 BA_DEF_ "BusType" STRING ;
-BA_DEF_ BO_ "GenMsgBackgroundColor" STRING ;
-BA_DEF_ BO_ "GenMsgForegroundColor" STRING ;
-BA_DEF_ BO_ "matchingcriteria" INT 0 0;
-BA_DEF_ BO_ "filterlabeling" INT 0 0;
+
 BA_ "GenMsgForegroundColor" BO_ 1894 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 896 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 903 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 1024 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 1026 "#000000";
-BA_ "GenMsgCycleTime" BO_ 172 10;
-BA_ "GenMsgCycleTime" BO_ 171 100;
-BA_ "GenMsgCycleTime" BO_ 169 100;
-BA_ "GenMsgCycleTime" BO_ 168 10;
-BA_ "GenMsgCycleTime" BO_ 167 10;
-BA_ "GenMsgCycleTime" BO_ 166 10;
-BA_ "GenMsgCycleTime" BO_ 165 10;
-BA_ "GenMsgCycleTime" BO_ 164 10;
-BA_ "GenMsgCycleTime" BO_ 163 10;
-BA_ "GenMsgCycleTime" BO_ 162 100;
-BA_ "GenMsgCycleTime" BO_ 161 100;
-BA_ "GenMsgCycleTime" BO_ 160 100;
-BA_ "GenMsgForegroundColor" BO_ 2147484929 "#000000";
-BA_DEF_DEF_ "GenMsgBackgroundColor" "#ffffff";
-BA_DEF_DEF_ "GenMsgForegroundColor" "#000000";
-BA_DEF_DEF_ "matchingcriteria" 0;
-BA_DEF_DEF_ "filterlabeling" 1;
-BA_DEF_DEF_ "GenMsgCycleTime" 0;
-BA_DEF_DEF_ "BusType" "CAN";
-BA_DEF_DEF_ "matchingcriteria" 0;
-BA_DEF_DEF_ "filterlabeling" 1;
-CM_ SG_ 172 INV_Power_On_Timer "Updated every 3 msec. This will roll over in approximately 150 days!";
-CM_ SG_ 172 INV_Torque_Feedback "Estimated motor torque feedback";
-CM_ SG_ 172 INV_Commanded_Torque "The commanded Torque";
-CM_ SG_ 171 INV_Run_Fault_Hi "Each bit represents a fault. Please refer to PM100 Users Manual for details.";
-CM_ SG_ 171 INV_Post_Fault_Hi "Each bit represents a fault. Please refer to PM100 Users Manual for details.";
-CM_ SG_ 171 INV_Run_Fault_Lo "Each bit represents a fault. Please refer to PM100 Users Manual for details.";
-CM_ SG_ 171 INV_Post_Fault_Lo "Each bit represents a fault. Please refer to PM100 Users Manual for details.";
-CM_ SG_ 169 INV_Ref_Voltage_12_0 "12V Input Voltage";
-CM_ SG_ 169 INV_Ref_Voltage_5_0 "Transducer voltage";
-CM_ SG_ 169 INV_Ref_Voltage_2_5 "Internal reference voltage";
-CM_ SG_ 169 INV_Ref_Voltage_1_5 "Internal reference voltage";
-CM_ SG_ 168 INV_Iq "The measured Iq current";
-CM_ SG_ 168 INV_Id "The measured Id current";
-CM_ SG_ 168 INV_Vq_ff "The q-axis voltage feedforward";
-CM_ SG_ 168 INV_Vd_ff "The d-axis voltage feedforward";
-CM_ SG_ 167 INV_VBC_Vq_Voltage "Measured value of the voltage between Phase B and Phase C";
-CM_ SG_ 167 INV_VAB_Vd_Voltage "Measured value of the voltage betwen phase A and Phase B";
-CM_ SG_ 167 INV_Output_Voltage "The calculated value of the output voltage, in peak line-neutral volts";
-CM_ SG_ 167 INV_DC_Bus_Voltage "The actual measured value of the DC bus voltage";
-CM_ SG_ 166 INV_DC_Bus_Current "The Calculated DC Bus Current";
-CM_ SG_ 166 INV_Phase_C_Current "The measured value of Phase C current";
-CM_ SG_ 166 INV_Phase_B_Current "The measured value of Phase B current";
-CM_ SG_ 166 INV_Phase_A_Current "The measured value of Phase A current";
-CM_ SG_ 165 INV_Delta_Resolver_Filtered "Used in calibration of resolver angle adjustment.";
-CM_ SG_ 165 INV_Electrical_Output_Frequency "The actual electrical frequency of the inverter";
-CM_ SG_ 165 INV_Motor_Speed "The measured speed of the motor";
-CM_ SG_ 165 INV_Motor_Angle_Electrical "The Electrical Angle of the motor as read by the encoder or resolver";
-CM_ SG_ 164 INV_Digital_Input_5 "Status of Digital Input #5";
-CM_ SG_ 164 INV_Digital_Input_4 "Status of Digital Input #4";
-CM_ SG_ 164 INV_Digital_Input_3 "Status of Digital Input #3";
-CM_ SG_ 164 INV_Digital_Input_2 "Status of Digital Input #2";
-CM_ SG_ 164 INV_Digital_Input_1 "Status of Digital Input #1";
-CM_ SG_ 164 INV_Digital_Input_6 "Status of Digital Input #6";
-CM_ SG_ 164 INV_Digital_Input_7 "Status of Digital Input #7";
-CM_ SG_ 164 INV_Digital_Input_8 "Status of Digital Input #8";
-CM_ SG_ 163 INV_Analog_Input_1 "Voltage on Analog Input #1";
-CM_ SG_ 163 INV_Analog_Input_2 "Voltage on Analog Input #2";
-CM_ SG_ 163 INV_Analog_Input_3 "Voltage on Analog Input #3";
-CM_ SG_ 163 INV_Analog_Input_4 "Voltage on Analog Input #4";
-CM_ SG_ 163 INV_Analog_Input_5 "Voltage on Analog Input #5";
-CM_ SG_ 163 INV_Analog_Input_6 "Voltage on Analog Input #6";
-CM_ SG_ 162 INV_Torque_Shudder "Shudder compensation value of torque";
-CM_ SG_ 162 INV_Motor_Temp "Motor Temperature Sensor";
-CM_ SG_ 162 INV_Hot_Spot_Temp "Estimated inverter hot spot temperature";
-CM_ SG_ 162 INV_Coolant_Temp "Estimated Coolant Temperature";
-CM_ SG_ 161 INV_RTD2_Temperature "RTD input 2 (PT1000) Temperature";
-CM_ SG_ 161 INV_RTD1_Temperature "RTD input 1 (PT1000) Temperature";
-CM_ SG_ 161 INV_Control_Board_Temp "Control Board Temperature";
-CM_ SG_ 161 INV_Stall_Burst_Model_Temp "Hottest temperature estimated from the stall burst thermal model feature";
-CM_ SG_ 160 INV_Gate_Driver_Board_Temp "Gate Driver Board Temperature";
-CM_ SG_ 160 INV_Module_C_Temp "IGBT Module C Temperature";
-CM_ SG_ 160 INV_Module_B_Temp "IGBT Module B Temperature";
-CM_ SG_ 160 INV_Module_A_Temp "IGBT Module A Temperature";
-VAL_ 1894 State 0 "LV" 1 "PRECHARGE" 2 "HV_ENABLED" 3 "DRIVE" 5 "STARTUP" 129 "DRV_FRM_LV" 130 "PRE_TM_OUT" 131 "BR_NOT_PRS" 132 "HV_OFF_DRV" 133 "SNSR_DSCRP" 135 "SHTDWN_OPN" 137 "HARD_BSPD" 138 "MC_FAULT" 134 "BSPD_TRIPD" 136 "UNCALIBRTD";
-VAL_ 896 BMS_Status 0 "NO_ERROR" 1 "CHARGE_MODE" 2 "BMS_TEMP_OVER" 4 "BMS_TEMP_UNDER" 8 "OVERVOLT" 16 "UNDERVOLT" 32 "OPEN_WIRE" 64 "MISMATCH" 128 "SPI_FAULT";
+BA_ "GenMsgForegroundColor" BO_ 1281 "#000000";
+
+VAL_ 1894 State 0 "LV" 1 "PRECHARGE" 2 "HV ENABLED" 3 "DRIVE" 5 "STARTUP" 129 "DRV FRM LV" 130 "PRE TM OUT" 131 "BR NOT PRS" 132 "HV OFF DRV" 133 "SNSR DSCRP" 135 "SHTDWN OPN" 137 "HARD BSPD" 138 "MC FAULT" 134 "BSPD TRIPD" 136 "UNCALIBRTD";
+VAL_ 896 BMS_Status 0 "NO ERROR" 1 "CHARGE MODE" 2 "BMS TEMP OVER" 4 "BMS TEMP UNDER" 8 "OVERVOLT" 16 "UNDERVOLT" 32 "OPEN WIRE" 64 "MISMATCH" 128 "SPI FAULT";
