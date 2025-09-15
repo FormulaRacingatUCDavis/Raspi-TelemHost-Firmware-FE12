@@ -278,10 +278,12 @@ namespace frucd
         {
             UpdateSpeed(sigMap["Front_Wheel_Speed"].second);
         }
-        else if (msg.Name() == "Dashboard_Knobs")
+        else if (msg.Name() == "Dashboard_Inputs")
         {
-            // TODO: Maybe make MainWindow an observer?
-            mMainWindow->SetMode(2);
+            if (sigMap["DISPLAY_MODE"].second == 0.0)
+                mMainWindow->SetMode(0.0);
+            else if (sigMap["DISPLAY_MODE"].second == 1.0)
+                mMainWindow->SetMode(1.0);
         }
         else if (msg.Name() == "PEI_Status")
         {

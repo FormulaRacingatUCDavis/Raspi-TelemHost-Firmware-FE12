@@ -105,11 +105,13 @@ namespace frucd
 
     void MainWindow::SetMode(double mode)
     {
-        if (mode == 0.0)
+        int current = mPanelCollection->GetSelection();
+
+        if (mode == 0.0 && current != 0)
             ShowMainPanel();
-        else if (mode == 1.0)
+        else if (mode == 1.0 && current != 1)
             ShowDebugPanel();
-        else if (mode == 2.0)
+        else if (mode == 2.0 && current != 2)
             ShowGaugePanel();
     }
 

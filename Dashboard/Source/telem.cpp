@@ -32,7 +32,7 @@ namespace frucd
     {
         mCsvFile << gFields << '\n';
 
-        //InitAdHat(); // TODO: need actual hw for this
+        // InitAdHat(); // TODO: need actual hw for this
         InitCan();
     }
 
@@ -46,7 +46,7 @@ namespace frucd
 
     void Telem::Log()
     {
-        //LogAdc(); // TODO: test with hw
+        // LogAdc(); // TODO: test with hw
         LogCan();
     }
 
@@ -57,9 +57,15 @@ namespace frucd
 
     void Telem::LogCan()
     {
-#ifdef FRUCD_USE_RASPI
+    #ifdef FRUCD_USE_RASPI
         can_frame frame;
         int numBytes = read(mCanSock, &frame, sizeof(can_frame));
+        if (numBytes < 0) {
+            if (errno != EAGAIN && errno != EWOULDBLOCK) {
+                perror("CAN read failed");
+            }
+            return;
+        }
 
         uint32_t id = (0x1FFFFFFF & frame.can_id);
         if (auto it = mFeMsgs.find(id);
@@ -76,7 +82,13 @@ namespace frucd
             for (auto& observer : mObservers)
                 observer.mcHandler(*msg, *mMcSpec, frame);
         }
-#endif
+
+        std::array<double, 8> values{};
+        for (int i = 0; i < frame.can_dlc && i < 8; ++i) {
+            values[i] = frame.data[i];
+        }
+        WriteRow(frame.can_id, std::move(values));
+    #endif
     }
 
     void Telem::LogAdc()
@@ -165,7 +177,7 @@ namespace frucd
         for (const auto& msg : mMcSpec->Messages())
             mMcMsgs.insert(std::make_pair(msg.Id(), &msg));
         
-        static constexpr std::string_view nodeName = "vcan0"; // TODO: change this when using an actual can device
+        static constexpr std::string_view nodeName = "can0"; // TODO: change this when using an actual can device
         mCanSock = socket(PF_CAN, SOCK_RAW, CAN_RAW);
         if (mCanSock == -1)
         {
@@ -199,7 +211,7 @@ namespace frucd
 
     std::filesystem::path Telem::GetCsvPath()
     {
-        auto logDir = std::filesystem::current_path() / "logs";
+        auto logDir = std::filesystem::current_path() / "Logs";
         std::filesystem::create_directory(logDir); // Creates if doesn't exist
         return (logDir / GetFormattedTime()).replace_extension(".csv");
     }
