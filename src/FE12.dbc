@@ -96,10 +96,35 @@ BO_ 1027 TelemNode_Strain_Gauges_Rear: 8 TelemNode
    SG_ RLUB_A_Arm_Strain_Gauge : 39|16@0+ (1,0) [0|65535] "" Vector__XXX
    SG_ RLLF_A_Arm_Strain_Gauge : 55|16@0+ (1,0) [0|65535] "" Vector__XXX
 
-BO_ 1281 Dashboard_Knobs: 5 Dashboard
-   SG_ Knob1 : 7|16@0+ (1,0) [0|4095] "" Vector__XXX
-   SG_ Knob2 : 23|16@0+ (1,0) [0|4095] "" Vector__XXX
-   SG_ Button : 39|8@0+ (1,0) [0|1] "" Vector__XXX
+BO_ 2147484929 Dashboard_Inputs: 3 Dashboard
+   SG_ Knob1 : 7|8@0+ (1,0) [0|100] "" Vector__XXX
+   SG_ Knob2 : 15|8@0+ (1,0) [0|100] "" Vector__XXX
+   SG_ DISPLAY_MODE : 20|2@0+ (1,0) [0|1] "" Vector__XXX
+   SG_ TC : 18|1@0+ (1,0) [0|1] "" Vector__XXX
+   SG_ MARKER : 17|1@0+ (1,0) [0|1] "" Vector__XXX
+   SG_ OVERTAKE : 16|1@0+ (1,0) [0|1] "" Vector__XXX
+
+BO_ 2147484552 PEI_Current: 4 PEI
+   SG_ Current_ADC_Reading : 7|16@0+ (0.236158,0) [0|4095] "A" Vector__XXX
+   SG_ Current_Reference_ADC_Reading : 23|16@0+ (0.236158,0) [0|4095] "A" Vector__XXX
+
+BO_ 2147484546 Raw_High_Level_BMS_Data: 4 PEI
+   SG_ HI_Temp_ADC_Reading : 7|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
+   SG_ Pack_Voltage : 23|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
+
+BO_ 2147484547 Raw_BMS_Voltages: 8 PEI
+   SG_ Subpack : 7|8@0+ (1,0) [0|4] "" Vector__XXX
+   SG_ Voltage_1_ADC_Reading : 23|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
+   SG_ Group : 15|8@0+ (1,0) [0|7] "" Vector__XXX
+   SG_ Voltage_2_ADC_Reading : 39|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
+   SG_ Voltage_3_ADC_Reading : 55|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
+
+BO_ 2147484548 Raw_BMS_Temps: 8 PEI
+   SG_ Subpack : 7|8@0+ (1,0) [0|4] "" Vector__XXX
+   SG_ Group : 15|8@0+ (1,0) [0|7] "" Vector__XXX
+   SG_ Temp_1_ADC_Reading : 23|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
+   SG_ Temp_2_ADC_Reading : 39|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
+   SG_ Temp_2_ADC_Reading51 : 55|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
 
 BA_DEF_ BO_ "GenMsgBackgroundColor" STRING ;
 BA_DEF_ BO_ "GenMsgForegroundColor" STRING ;
@@ -111,21 +136,19 @@ BA_DEF_ BO_ "GenMsgBackgroundColor" STRING ;
 BA_DEF_ BO_ "GenMsgForegroundColor" STRING ;
 BA_DEF_ BO_ "matchingcriteria" INT 0 0;
 BA_DEF_ BO_ "filterlabeling" INT 0 0;
-BA_DEF_ BO_ "matchingcriteria" INT 0 0;
-BA_DEF_ BO_ "filterlabeling" INT 0 0;
 BA_ "GenMsgForegroundColor" BO_ 1894 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 896 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 903 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 1024 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 1026 "#000000";
-BA_ "GenMsgForegroundColor" BO_ 1281 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 2147484929 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 2147484547 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 2147484548 "#000000";
 BA_DEF_DEF_ "GenMsgBackgroundColor" "#ffffff";
 BA_DEF_DEF_ "GenMsgForegroundColor" "#000000";
 BA_DEF_DEF_ "matchingcriteria" 0;
 BA_DEF_DEF_ "filterlabeling" 1;
 BA_DEF_DEF_ "GenMsgCycleTime" 0;
 BA_DEF_DEF_ "BusType" "CAN";
-BA_DEF_DEF_ "matchingcriteria" 0;
-BA_DEF_DEF_ "filterlabeling" 1;
-VAL_ 1894 State 0 "LV" 1 "PRECHARGE" 2 "HV_ENABLED" 3 "DRIVE" 5 "STARTUP" 129 "DRV_FRM_LV" 130 "PRE_TM_OUT" 131 "BR_NOT_PRS" 132 "HV_OFF_DRV" 133 "SNSR_DSCRP" 135 "SHTDWN_OPN" 137 "HARD_BSPD" 138 "MC_FAULT" 134 "BSPD_TRIPD" 136 "UNCALIBRTD";
-VAL_ 896 BMS_Status 0 "NO_ERROR" 1 "CHARGE_MODE" 2 "BMS_TEMP_OVER" 4 "BMS_TEMP_UNDER" 8 "OVERVOLT" 16 "UNDERVOLT" 32 "OPEN_WIRE" 64 "MISMATCH" 128 "SPI_FAULT";
+VAL_ 1894 State 0 "LV" 1 "PRECHARGE" 2 "HV ENABLED" 3 "DRIVE" 5 "STARTUP" 129 "DRV FRM LV" 130 "PRE TM OUT" 131 "BR NOT PRS" 132 "HV OFF DRV" 133 "SNSR DSCRP" 135 "SHTDWN OPN" 137 "HARD BSPD" 138 "MC FAULT" 134 "BSPD TRIPD" 136 "UNCALIBRTD";
+VAL_ 896 BMS_Status 0 "NO ERROR" 1 "CHARGE MODE" 2 "BMS TEMP OVER" 4 "BMS TEMP UNDER" 8 "OVERVOLT" 16 "UNDERVOLT" 32 "OPEN WIRE" 64 "MISMATCH" 128 "SPI FAULT";

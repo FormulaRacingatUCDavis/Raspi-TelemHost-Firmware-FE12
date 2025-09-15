@@ -5,7 +5,7 @@ import cantools
 
 
 # Test CAN messages 0 to N
-N = 8
+N = 11
 # Or test one CAN message if N = None
 MSG_IND = 7
 
@@ -28,7 +28,7 @@ msg_names = [
     'M172_Torque_And_Timer_Info',
     'Dashboard_Vehicle_State',
     'PEI_BMS_Status',
-    'Dashboard_Knobs'
+    'Dashboard_Inputs'
 ]
 
 vcu_states = [
@@ -91,10 +91,14 @@ while True:
                     'Front_Wheel_Speed': random.randint(0, 65535),
                     'TC_Torque_Request': round(random.uniform(0, 6553.5), 1)
                 }
-            case 'Dashboard_Knobs':
+            case 'Dashboard_Inputs':
                 data = {
-                    'Knob1': random.randint(0, 4095),
-                    'Knob2': random.randint(0, 4095),
+                    'Knob1': random.randint(0, 100),
+                    'Knob2': random.randint(0, 100),
+                    'OVERTAKE': random.randint(0, 1),
+                    'MARKER': random.randint(0, 1),
+                    'TC': random.randint(0, 1),
+                    'DISPLAY_MODE': random.randint(0, 1)
                 }
             case 'PEI_Status':
                 data = {
@@ -154,3 +158,4 @@ while True:
     encoded = message.encode(data)
     msg = can.Message(arbitration_id=message.frame_id, data=encoded, is_extended_id=False)
     bus.send(msg)
+    print(msg)

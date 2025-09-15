@@ -19,23 +19,23 @@ dashboard = Dashboard('FE12 Dashboard')
 dashboard.root.bind('<Escape>', lambda event: dashboard.root.destroy())
 
 telem = TelemetryManager()
-telem.csv_init()
+telem.csv_init(CAN_NODE)
 telem.can_init(CAN_NODE, CAN_INTERFACE, FE_DBC_FILE, CM200_DBC_FILE)
-telem.adhat_init(N_ADC, REF)
+# telem.adhat_init(N_ADC, REF)
 
 def update_dashboard():
     while True:
-        if telem.mode == 0:
-            if dashboard.current_frame != dashboard.main_frame:
-                dashboard.switch_frame(dashboard.main_frame)
+        if dashboard.mode == 'drive':
+            # if dashboard.current_frame != dashboard.main_frame:
+                # dashboard.switch_frame(dashboard.main_frame)
             dashboard.update_state(telem.vcu_state, telem.bms_state)
             dashboard.update_temp(telem.motor_temp, telem.mc_temp, telem.pack_temp, telem.soc)
             dashboard.update_speed(telem.speed_RPM)
             dashboard.update_glv(telem.glv_voltage)
-            dashboard.update_knob(telem.knob1_adc, telem.knob2_adc)
-        elif telem.mode == 1:
-            if dashboard.current_frame != dashboard.debug_frame:
-                dashboard.switch_frame(dashboard.debug_frame)
+            # dashboard.update_knob(telem.knob1_adc, telem.knob2_adc)
+        elif dashboard.mode == 'debug':
+            # if dashboard.current_frame != dashboard.debug_frame:
+            #     dashboard.switch_frame(dashboard.debug_frame)
             dashboard.debug(
                 telem.soc,
                 telem.pack_temp,
@@ -49,13 +49,12 @@ def update_dashboard():
                 DEBUG_FREE_SLOT,
                 DEBUG_FREE_SLOT_UNIT
             )
-            dashboard.update_knob(telem.knob1_adc, telem.knob2_adc)
+            # dashboard.update_knob(telem.knob1_adc, telem.knob2_adc)
 
 if __name__ == '__main__':
     threading.Thread(target=telem.process_can, daemon=True).start()
     threading.Thread(target=update_dashboard, daemon=True).start()
     threading.Thread(target=telem.log_can, daemon=True).start()
-    threading.Thread(target=telem.log_adc, daemon=True).start()
 
     dashboard.root.attributes('-fullscreen', True)
     dashboard.root.config(cursor="none")

@@ -60,7 +60,7 @@ class Dashboard:
         # Vehicle state
         header_state = tk.Label(self.main_frame, text=f'STATE:', font=('Trebuchet MS', header_font_size, 'bold'), bg='black', fg='yellow', anchor='w', pady=5)
         header_state.grid(row=3, column=0, sticky='nsew', padx=(padx_out, 0))
-        self.lbl_state = tk.Label(self.main_frame, text='STARTUP', font=('Trebuchet MS', 40, 'bold'), fg='black', anchor='center', padx=5, pady=5)
+        self.lbl_state = tk.Label(self.main_frame, text='STARTUP', font=('Trebuchet MS', 30, 'bold'), fg='black', anchor='center', padx=5, pady=5)
         self.lbl_state.grid(row=4, column=0, sticky='nsew', padx=(padx_out, 0))
 
         # Column Divider
@@ -227,19 +227,12 @@ class Dashboard:
 
     def update_state(self, vcu_state, bms_state):
         if vcu_state == self.vcu_state and bms_state == self.bms_state:
-            # Exit error flash screen if 3 seconds has passed since change
-            if self.current_frame == self.error_frame:
-                if time.time() - self.error_timestamp > 3:
-                    self.current_frame.forget()
-                    self.main_frame.pack(fill='both', expand=True)
-                    self.root.update_idletasks()
-                    self.current_frame = self.main_frame
             return
         self.vcu_state = vcu_state
         self.bms_state = bms_state
 
         # Prioritize BMS faults over VCU faults
-        if self.bms_state != 'NO_ERROR' and self.bms_state != None:
+        if self.bms_state != 'NO ERROR' and self.bms_state != None:
             self.error_timestamp = time.time()
             if isinstance(self.bms_state, int):
                 state = 'YO WTF?'
@@ -269,10 +262,8 @@ class Dashboard:
         if self.bms_error or self.vcu_error:
             self.lbl_state.config(text=state, bg='red')
             self.error_frame.config(text=state)
-            self.switch_frame(self.error_frame)
         else:
             self.lbl_state.config(text=state, bg=color)
-            self.switch_frame(self.main_frame)
 
     def update_temp(self, motor_temp, mc_temp, pack_temp, soc):
         if (motor_temp == self.motor_temp and 
@@ -347,37 +338,37 @@ class Dashboard:
         
         self.lbl_voltage.config(text=f'{(self.glv_voltage):.2f}', bg=color)
 
-    def update_knob(self, knob1_adc, knob2_adc):
-        if knob1_adc != self.knob1_adc and self.knob1_adc != None:
-            self.knob1_adc = knob1_adc
-            percentage = (knob1_adc / 4095) * 100
-            color = 'dodger blue'
-        elif knob2_adc != self.knob2_adc and self.knob2_adc != None:
-            self.knob2_adc = knob2_adc
-            percentage = (knob2_adc / 4095) * 100
-            color = 'orange red'
-        else:
-            # Exit knob flash screen if 1 second has passed since change
-            if self.current_frame == self.gauge_frame:
-                if time.time() - self.knob_timestamp > 3:
-                    if self.bms_error == True or self.vcu_error == True:
-                        self.current_frame.forget()
-                        self.error_frame.pack(fill='both', expand=True)
-                        self.root.update_idletasks()
-                        self.current_frame = self.error_frame
-                    else:
-                        self.current_frame.forget()
-                        self.previous_frame.pack(fill='both', expand=True)
-                        self.root.update_idletasks()
-                        self.current_frame = self.previous_frame
-            return
+    # def update_knob(self, knob1_adc, knob2_adc):
+    #     if knob1_adc != self.knob1_adc and self.knob1_adc != None:
+    #         self.knob1_adc = knob1_adc
+    #         percentage = (knob1_adc / 100) * 100
+    #         color = 'dodger blue'
+    #     elif knob2_adc != self.knob2_adc and self.knob2_adc != None:
+    #         self.knob2_adc = knob2_adc
+    #         percentage = (knob2_adc / 100) * 100
+    #         color = 'orange red'
+    #     else:
+    #         # Exit knob flash screen if 1 second has passed since change
+    #         if self.current_frame == self.gauge_frame:
+    #             if time.time() - self.knob_timestamp > 3:
+    #                 if self.bms_error == True or self.vcu_error == True:
+    #                     self.current_frame.forget()
+    #                     self.error_frame.pack(fill='both', expand=True)
+    #                     self.root.update_idletasks()
+    #                     self.current_frame = self.error_frame
+    #                 else:
+    #                     self.current_frame.forget()
+    #                     self.previous_frame.pack(fill='both', expand=True)
+    #                     self.root.update_idletasks()
+    #                     self.current_frame = self.previous_frame
+    #         return
         
-        if self.current_frame != self.gauge_frame:
-            self.previous_frame = self.current_frame
-            self.switch_frame(self.gauge_frame)
+    #     if self.current_frame != self.gauge_frame:
+    #         self.previous_frame = self.current_frame
+    #         self.switch_frame(self.gauge_frame)
 
-        self.gauge_frame.rowconfigure(0, weight=int(100 - percentage))
-        self.gauge_frame.rowconfigure(1, weight=int(percentage))
+    #     self.gauge_frame.rowconfigure(0, weight=int(100 - percentage))
+    #     self.gauge_frame.rowconfigure(1, weight=int(percentage))
 
-        self.lbl_gauge.config(text=str(round(percentage)), bg=color)
-        self.knob_timestamp = time.time()
+    #     self.lbl_gauge.config(text=str(round(percentage)), bg=color)
+    #     self.knob_timestamp = time.time()
