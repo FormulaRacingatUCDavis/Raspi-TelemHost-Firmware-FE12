@@ -1,20 +1,17 @@
-# Raspberry Pi Telemetry Host (FE12)
+# Raspberry Pi Telemetry Host
 Displays and logs telemetry data received over CAN using a Raspberry Pi.
 
-![DashboardScreenshot](assets/example.png)
+![Dashboard Screenshot](Assets/example.png)
 
 ```ini
-# Example Service
+# Example systemd service
 [Unit]
-Description=FRUCD Dashboard
+Description=FRUCD Telemetry Host
 
 [Service]
-ExecStart=/bin/bash /home/ryan/Projects/Raspi-TelemHost-Firmware-FE12/startup.sh
-User=ryan
+ExecStart=/bin/bash /path/to/RaspPi-TelemHost/startup.sh
+User=<your-username>
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
-
-
-sudo ./Build/bin/DAQ --> sudo needed to avoid segmentation fault
