@@ -5,15 +5,13 @@ import cantools
 
 
 # Test CAN messages 0 to N
-N = 9
+N = 8
 # Or test one CAN message if N = None
 MSG_IND = 7
 
 
-fe_dbc_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', 'FE12.dbc'))
-cm200_dbc_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', '20230606 Gen5 CAN DB.dbc'))
-cm200_db = cantools.database.load_file(cm200_dbc_path)
-fe_db = cantools.database.load_file(fe_dbc_path)
+cm200_db = cantools.database.load_file('20240129 Gen5 CAN DB.dbc')
+fe_db = cantools.database.load_file('FE12.dbc')
 bus = can.interface.Bus(channel='vcan0', interface='socketcan')
 
 msg_names = [
@@ -91,11 +89,10 @@ while True:
                     'Front_Wheel_Speed': random.randint(0, 65535),
                     'TC_Torque_Request': round(random.uniform(0, 6553.5), 1)
                 }
-            case 'Dashboard_Inputs':
+            case 'Dashboard_Knobs':
                 data = {
                     'Knob1': random.randint(0, 4095),
                     'Knob2': random.randint(0, 4095),
-                    'DISPLAY_MODE': random.randint(0, 1)
                 }
             case 'PEI_Status':
                 data = {

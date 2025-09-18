@@ -1,0 +1,14 @@
+{
+  "can": {
+    "node": "vcan0"
+  },
+  "paths": {
+    "logs": "../Logs",
+    "test_logs": "../TestLogs",
+    "assets": "Assets"
+  },
+  "dbc": {
+    "fe": "FE12.dbc",
+    "mc": "20240129 Gen5 CAN DB.dbc"
+  }
+}

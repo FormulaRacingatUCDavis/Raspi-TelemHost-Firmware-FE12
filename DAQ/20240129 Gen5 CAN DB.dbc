@@ -57,15 +57,6 @@ BO_ 193 M193_Read_Write_Param_Command: 8 VCU
  SG_ VCU_INV_Parameter_RW_Command : 16|1@1+ (1,0) [0|1] "" Vector__XXX
  SG_ VCU_INV_Parameter_Address : 0|16@1+ (1,0) [0|65535] "" Vector__XXX
 
-BO_ 192 M192_Command_Message: 8 VCU
- SG_ VCU_INV_Inverter_Enable : 40|1@1+ (1,0) [0|1] "" Vector__XXX
- SG_ VCU_INV_Direction_Command : 32|1@1+ (1,0) [0|1] "" Vector__XXX
- SG_ VCU_INV_Speed_Command : 16|16@1- (1,0) [-32768|32767] "angular_speed:rpm" Vector__XXX
- SG_ VCU_INV_Torque_Command : 0|16@1- (0.1,0) [-3276.8|3276.7] "torque:N.m" Vector__XXX
- SG_ VCU_INV_Inverter_Discharge : 41|1@1+ (1,0) [0|1] "" Vector__XXX
- SG_ VCU_INV_Torque_Limit_Command : 48|16@1- (0.1,0) [-3276.8|3276.7] "torque:N.m" Vector__XXX
- SG_ VCU_INV_Speed_Mode_Enable : 42|1@1+ (1,0) [0|1] "" Vector__XXX
-
 BO_ 171 M171_Fault_Codes: 8 INV
  SG_ INV_Run_Fault_Hi : 48|16@1+ (1,0) [0|65535] "" Vector__XXX
  SG_ INV_Post_Fault_Hi : 16|16@1+ (1,0) [0|65535] "" Vector__XXX
@@ -204,6 +195,9 @@ BO_ 176 M176_Fast_Info: 8 INV
  SG_ INV_Fast_Motor_Speed : 32|16@1- (1,0) [-32768|32767] "angular_speed:rpm" Vector__XXX
  SG_ INV_Fast_DC_Bus_Voltage : 48|16@1- (0.1,0) [-3276.8|3276.7] "voltage:V" Vector__XXX
 
+BO_ 177 M177_Torque_Capability: 8 INV
+ SG_ INV_Torque_Capability : 0|16@1+ (0.1,0) [0|6553.6] "torque:N.m" Vector__XXX
+
 
 
 CM_ SG_ 173 INV_Iq_Command "The commanded Q-axis current";
@@ -231,6 +225,7 @@ CM_ SG_ 192 VCU_INV_Torque_Command "Torque command when in torque mode";
 CM_ SG_ 192 VCU_INV_Inverter_Discharge "0=Discharge Disable,1=Discharge Enable";
 CM_ SG_ 192 VCU_INV_Torque_Limit_Command "Torque Limit, set to 0 to keep default";
 CM_ SG_ 192 VCU_INV_Speed_Mode_Enable "0 = No change to mode, 1 = change to speed mode from torque mode";
+CM_ SG_ 192 VCU_INV_Rolling_Counter "Rolling Counter sent to inverter.  If used increment count with each message sent.  Otherwise can be set to 0.";
 CM_ SG_ 171 INV_Run_Fault_Hi "Each bit represents a fault. Please refer to PM100 Users Manual for details.";
 CM_ SG_ 171 INV_Post_Fault_Hi "Each bit represents a fault. Please refer to PM100 Users Manual for details.";
 CM_ SG_ 171 INV_Run_Fault_Lo "Each bit represents a fault. Please refer to PM100 Users Manual for details.";
@@ -318,6 +313,7 @@ CM_ SG_ 176 INV_Fast_Torque_Command "The commanded torque";
 CM_ SG_ 176 INV_Fast_Torque_Feedback "The estimated torque";
 CM_ SG_ 176 INV_Fast_Motor_Speed "Motor speed";
 CM_ SG_ 176 INV_Fast_DC_Bus_Voltage "DC Bus Voltage";
+CM_ SG_ 177 INV_Torque_Capability "The torque capability of the inverter given the current operating point.";
 BA_DEF_ BO_  "GenMsgCycleTime" INT 0 100000;
 BA_DEF_  "BusType" STRING ;
 BA_DEF_DEF_  "GenMsgCycleTime" 0;
@@ -339,6 +335,7 @@ BA_ "GenMsgCycleTime" BO_ 162 100;
 BA_ "GenMsgCycleTime" BO_ 161 100;
 BA_ "GenMsgCycleTime" BO_ 160 100;
 BA_ "GenMsgCycleTime" BO_ 176 3;
+BA_ "GenMsgCycleTime" BO_ 177 10;
 VAL_ 192 VCU_INV_Inverter_Enable 0 "Turn the inverter OFF" 1 "Turn the Inverter ON" ;
 VAL_ 192 VCU_INV_Direction_Command 0 "CW" 1 "CCW" ;
 VAL_ 192 VCU_INV_Inverter_Discharge 0 "Discharge Disable" 1 "Discharge Enable (if EEPROM parameter is set)" ;

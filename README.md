@@ -15,3 +15,6 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
+
+
+sudo ./Build/bin/DAQ --> sudo needed to avoid segmentation fault
