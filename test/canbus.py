@@ -11,7 +11,7 @@ MSG_IND = 7
 
 
 fe_dbc_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', 'FE12.dbc'))
-cm200_dbc_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', '20230606 Gen5 CAN DB.dbc'))
+cm200_dbc_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', '20240129 Gen5 CAN DB.dbc'))
 cm200_db = cantools.database.load_file(cm200_dbc_path)
 fe_db = cantools.database.load_file(fe_dbc_path)
 bus = can.interface.Bus(channel='vcan0', interface='socketcan')
