@@ -1,4 +1,5 @@
 .venv/
-src/__pycache__
-testlogs
-logs/
+Dashboard/__pycache__
+WebServer/__pycache__
+TestLogs
+Logs

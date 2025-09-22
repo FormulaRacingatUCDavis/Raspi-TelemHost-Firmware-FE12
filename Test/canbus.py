@@ -10,8 +10,9 @@ N = 11
 MSG_IND = 7
 
 
-fe_dbc_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', 'FE12.dbc'))
-cm200_dbc_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', '20240129 Gen5 CAN DB.dbc'))
+root = os.path.dirname(os.path.dirname(__file__))
+fe_dbc_path = os.path.join(root, 'FE12.dbc')
+cm200_dbc_path = os.path.join(root, '20240129 Gen5 CAN DB.dbc')
 cm200_db = cantools.database.load_file(cm200_dbc_path)
 fe_db = cantools.database.load_file(fe_dbc_path)
 bus = can.interface.Bus(channel='vcan0', interface='socketcan')
@@ -57,7 +58,7 @@ while True:
         try:
             message = db.get_message_by_name(msg_name)
             source_db = db_name
-            break  # Exit loop once found
+            break
         except KeyError:
             continue
 

@@ -6,6 +6,7 @@ class Dashboard:
         self.root = tk.Tk()
         self.root.title(title)
         self.root.configure(bg='black')
+        self.root.bind('<Escape>', lambda event: self.root.destroy())
 
         # Driver mode values
         self.bms_state = None

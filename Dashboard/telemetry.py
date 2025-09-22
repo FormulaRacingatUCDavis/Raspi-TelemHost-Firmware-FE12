@@ -33,14 +33,16 @@ class TelemetryManager:
         self.cm200_db = None
 
     def csv_init(self, can_node):
-        """Initialize CSV file"""
+        """
+        Initialize CSV file
+        """
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         self.start_time = time.time()
 
         if can_node == 'can0':
-            log_dir = os.path.join(self.root, 'logs')
+            log_dir = os.path.join(self.root, 'Logs')
         elif can_node == 'vcan0':
-            log_dir = os.path.join(self.root, 'testlogs')
+            log_dir = os.path.join(self.root, 'TestLogs')
 
         os.makedirs(log_dir, exist_ok=True)
         log_path = os.path.join(log_dir, f'{timestamp}.csv')
@@ -50,12 +52,14 @@ class TelemetryManager:
             fieldnames=['ID', 'D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'Timestamp']
         )
 
-    def can_init(self, channel, interface, frucd_dbc_file, cm200_dbc_file):
-        """Initialize CAN interface"""
-        self.bus = can.interface.Bus(channel=channel, interface=interface)
+    def can_init(self, channel):
+        """
+        Initialize CAN interface
+        """
+        self.bus = can.interface.Bus(channel=channel, interface='socketcan')
 
-        frucd_dbc_path = os.path.join(os.path.dirname(__file__), frucd_dbc_file)
-        cm200_dbc_path = os.path.join(os.path.dirname(__file__), cm200_dbc_file)
+        frucd_dbc_path = os.path.join(self.root, 'FE12.dbc')
+        cm200_dbc_path = os.path.join(self.root, '20240129 Gen5 CAN DB.dbc')
 
         self.frucd_dbc = cantools.database.load_file(frucd_dbc_path)
         self.cm200_db = cantools.database.load_file(cm200_dbc_path)
@@ -63,7 +67,9 @@ class TelemetryManager:
         self.can_queue = Queue()
 
     def process_can(self):
-        """Process CAN message"""
+        """
+        Process CAN message
+        """
         while True:
             msg = self.bus.recv()
             self.can_queue.put(msg)
@@ -138,7 +144,9 @@ class TelemetryManager:
                             self.test = self.motor_speed * self.torque_feedback
 
     def log_can(self):
-        """Log CAN message to CSV"""
+        """
+        Log CAN message to CSV
+        """
         while True:
             msg = self.can_queue.get()
             data_bytes = list(msg.data)

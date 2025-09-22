@@ -1,22 +1,15 @@
 #!/home/frucd/projects/Raspi-TelemHost-Firmware-FE12/.venv/bin/python
 
 import threading
-from dashboard import Dashboard
+from ui import Dashboard
 from telemetry import TelemetryManager
 
-
-CAN_NODE = 'vcan0'
-CAN_INTERFACE = 'socketcan'
-FE_DBC_FILE = 'FE12.dbc'
-CM200_DBC_FILE = '20240129 Gen5 CAN DB.dbc'
-
-
+CAN_NODE = 'can0'
 dashboard = Dashboard('FE12 Dashboard')
-dashboard.root.bind('<Escape>', lambda event: dashboard.root.destroy())
 
 telem = TelemetryManager()
 telem.csv_init(CAN_NODE)
-telem.can_init(CAN_NODE, CAN_INTERFACE, FE_DBC_FILE, CM200_DBC_FILE)
+telem.can_init(CAN_NODE)
 
 def update_dashboard():
     while True:
