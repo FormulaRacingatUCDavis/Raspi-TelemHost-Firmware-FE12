@@ -18,19 +18,6 @@ class Dashboard:
         self.glv_voltage = None
         self.soc = None
 
-        # Debug mode values
-        self.d_soc = None
-        self.d_pack_temp = -1
-        self.d_mc_temp = -1
-        self.d_motor_temp = -1
-        self.d_vcu_state = None
-        self.d_glv_voltage = None
-        self.d_shutdown = None
-        self.d_mc_state = None
-        self.d_free_slot = None
-        self.d_free_slot_header = None
-        self.d_free_slot_unit = None
-
         # Main frame
         self.main_frame = tk.Frame(self.root, bg='black')
 

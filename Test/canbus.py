@@ -104,7 +104,7 @@ while True:
             case 'PEI_Status':
                 data = {
                     'Current_ADC': random.randint(0, 65535),
-                    'Current_Reference': random.randint(0, 65535),
+                    'Current_Reference': random.randint(-2048, 2047),
                     'IMD_OK': random.randint(0, 1),
                     'BMS_OK': random.randint(0, 1),
                     'SHUTDOWN_FINAL': random.randint(0, 1),
@@ -155,8 +155,7 @@ while True:
                     'INV_Torque_Feedback': round(random.uniform(-3276.8, 3276.7), 1),
                     'INV_Power_On_Timer': random.randint(0, 1.28848e07)
                 }
-            
+
     encoded = message.encode(data)
     msg = can.Message(arbitration_id=message.frame_id, data=encoded, is_extended_id=False)
     bus.send(msg)
-    print(msg)

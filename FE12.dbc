@@ -48,14 +48,14 @@ BO_ 896 PEI_BMS_Status: 5 PEI
    SG_ Communication_Break_ID : 39|8@0- (1,0) [-1|9] "" Vector__XXX
 
 BO_ 903 PEI_Status: 5 PEI
-   SG_ Current_ADC : 15|16@0+ (1,0) [0|65535] "A" Vector__XXX
+   SG_ Current_ADC : 15|16@0+ (1,0) [0|65535] "Raw_ADC" Vector__XXX
    SG_ IMD_OK : 5|1@0+ (1,0) [0|1] "" Vector__XXX
    SG_ BMS_OK : 4|1@0+ (1,0) [0|1] "" Vector__XXX
    SG_ SHUTDOWN_FINAL : 3|1@0+ (1,0) [0|1] "" Vector__XXX
    SG_ AIR_NEG : 2|1@0+ (1,0) [0|1] "" Vector__XXX
    SG_ AIR_POS : 1|1@0+ (1,0) [0|1] "" Vector__XXX
    SG_ PRECHARGE : 0|1@0+ (1,0) [0|1] "" Vector__XXX
-   SG_ Current_Reference : 31|16@0+ (1,0) [0|65535] "A" Vector__XXX
+   SG_ Current_Reference : 31|16@0- (1,0) [-2048|2047] "Raw_ADC" Vector__XXX
 
 BO_ 1024 TelemNode_Cooling_Loop_Temps: 8 TelemNode
    SG_ Inlet_Water_Temp : 7|16@0- (0.1,0) [-3276.8|3276.7] "C" Vector__XXX
@@ -105,26 +105,26 @@ BO_ 1281 Dashboard_Inputs: 3 Dashboard
    SG_ OVERTAKE : 16|1@0+ (1,0) [0|1] "" Vector__XXX
 
 BO_ 904 PEI_Current: 4 PEI
-   SG_ Current_ADC_Reading : 7|16@0+ (0.236158,0) [0|4095] "A" Vector__XXX
-   SG_ Current_Reference_ADC_Reading : 23|16@0+ (0.236158,0) [0|4095] "A" Vector__XXX
+   SG_ Current_ADC_Reading : 7|16@0- (1,0) [-2048|2047] "Raw_ADC" Vector__XXX
+   SG_ Current_Reference_ADC_Reading : 23|16@0- (1,0) [-2048|2047] "Raw_ADC" Vector__XXX
 
 BO_ 898 PEI_Raw_High_Level_BMS_Data: 4 PEI
-   SG_ HI_Temp_ADC_Reading : 7|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
-   SG_ Pack_Voltage : 23|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
+   SG_ HI_Temp_ADC_Reading : 7|16@0- (1,0) [-2048|2047] "Raw_ADC" Vector__XXX
+   SG_ Pack_Voltage : 23|16@0- (1,0) [-2048|2047] "Raw_ADC" Vector__XXX
 
 BO_ 899 PEI_Raw_BMS_Voltages: 8 PEI
    SG_ Subpack : 7|8@0+ (1,0) [0|4] "" Vector__XXX
-   SG_ Voltage_1_ADC_Reading : 23|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
+   SG_ Voltage_1_ADC_Reading : 23|16@0- (1,0) [-2048|2047] "Raw_ADC" Vector__XXX
    SG_ Group : 15|8@0+ (1,0) [0|7] "" Vector__XXX
-   SG_ Voltage_2_ADC_Reading : 39|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
-   SG_ Voltage_3_ADC_Reading : 55|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
+   SG_ Voltage_2_ADC_Reading : 39|16@0- (1,0) [-2048|2047] "Raw_ADC" Vector__XXX
+   SG_ Voltage_3_ADC_Reading : 55|16@0- (1,0) [-2048|2047] "Raw_ADC" Vector__XXX
 
 BO_ 900 PEI_Raw_BMS_Temps: 8 PEI
    SG_ Subpack : 7|8@0+ (1,0) [0|4] "" Vector__XXX
    SG_ Group : 15|8@0+ (1,0) [0|7] "" Vector__XXX
-   SG_ Temp_1_ADC_Reading : 23|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
-   SG_ Temp_2_ADC_Reading : 39|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
-   SG_ Temp_2_ADC_Reading51 : 55|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
+   SG_ Temp_1_ADC_Reading : 23|16@0- (1,0) [-2048|2047] "Raw_ADC" Vector__XXX
+   SG_ Temp_2_ADC_Reading : 39|16@0- (1,0) [-2048|2047] "Raw_ADC" Vector__XXX
+   SG_ Temp_3_ADC_Reading : 55|16@0- (1,0) [-2048|2047] "Raw_ADC" Vector__XXX
 
 BO_ 1028 TelemNode_Shock_Angles_Rear: 4 TelemNode
    SG_ RL_Shock_Angle : 7|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
@@ -140,12 +140,18 @@ BA_DEF_ BO_ "matchingcriteria" INT 0 0;
 BA_DEF_ BO_ "filterlabeling" INT 0 0;
 BA_DEF_ BO_ "matchingcriteria" INT 0 0;
 BA_DEF_ BO_ "filterlabeling" INT 0 0;
+BA_DEF_ BO_ "matchingcriteria" INT 0 0;
+BA_DEF_ BO_ "filterlabeling" INT 0 0;
+BA_DEF_ BO_ "matchingcriteria" INT 0 0;
+BA_DEF_ BO_ "filterlabeling" INT 0 0;
 BA_DEF_DEF_ "GenMsgBackgroundColor" "#ffffff";
 BA_DEF_DEF_ "GenMsgForegroundColor" "#000000";
 BA_DEF_DEF_ "matchingcriteria" 0;
 BA_DEF_DEF_ "filterlabeling" 0;
 BA_DEF_DEF_ "GenMsgCycleTime" 0;
 BA_DEF_DEF_ "BusType" "CAN";
+BA_DEF_DEF_ "matchingcriteria" 0;
+BA_DEF_DEF_ "filterlabeling" 0;
 BA_ "GenMsgForegroundColor" BO_ 1894 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 896 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 903 "#000000";

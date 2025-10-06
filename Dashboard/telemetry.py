@@ -30,7 +30,7 @@ class TelemetryManager:
 
         self.can_queue = None
         self.frucd_dbc = None
-        self.cm200_db = None
+        self.cm200_dbc = None
 
     def csv_init(self, can_node):
         """
@@ -62,7 +62,7 @@ class TelemetryManager:
         cm200_dbc_path = os.path.join(self.root, '20240129 Gen5 CAN DB.dbc')
 
         self.frucd_dbc = cantools.database.load_file(frucd_dbc_path)
-        self.cm200_db = cantools.database.load_file(cm200_dbc_path)
+        self.cm200_dbc = cantools.database.load_file(cm200_dbc_path)
 
         self.can_queue = Queue()
 
@@ -76,7 +76,7 @@ class TelemetryManager:
 
             message = None
             source_db = None
-            for db in [self.frucd_dbc, self.cm200_db]:
+            for db in [self.frucd_dbc, self.cm200_dbc]:
                 try:
                     message = db.get_message_by_frame_id(msg.arbitration_id)
                     source_db = db
@@ -115,7 +115,7 @@ class TelemetryManager:
                             self.shutdown = 'SHUTDOWN FINAL'
                         else:
                             self.shutdown = 'NO SHUTDOWN'
-            elif source_db == self.cm200_db:
+            elif source_db == self.cm200_dbc:
                 match message.name:
                     case 'M160_Temperature_Set_1':
                         self.mc_temp = (
