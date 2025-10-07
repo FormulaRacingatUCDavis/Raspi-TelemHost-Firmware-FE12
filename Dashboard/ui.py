@@ -1,5 +1,4 @@
 import tkinter as tk
-import time
 
 class Dashboard:
     def __init__(self, title):
@@ -83,7 +82,6 @@ class Dashboard:
 
         # Prioritize BMS faults over VCU faults
         if self.bms_state != 'NO ERROR' and self.bms_state != None:
-            self.error_timestamp = time.time()
             if isinstance(self.bms_state, int):
                 state = 'YO WTF?'
                 self.bms_error = True
@@ -106,7 +104,6 @@ class Dashboard:
                     color = 'yellow'
                     self.vcu_error = False
                 else:
-                    self.error_timestamp = time.time()
                     self.vcu_error = True
 
         if self.bms_error or self.vcu_error:

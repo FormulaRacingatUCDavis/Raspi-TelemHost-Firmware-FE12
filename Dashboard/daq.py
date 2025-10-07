@@ -6,13 +6,22 @@ from queue import Queue
 from datetime import datetime
 import csv
 
-class TelemetryManager:
+class DAQEngine:
     def __init__(self):
-        self.root = os.path.dirname(os.path.dirname(__file__))
-        self.csv_file = None
-        self.csv_writer = None
+        # Logging
         self.start_time = None
+        self.root = os.path.dirname(os.path.dirname(__file__))
+        self.log_path = None
 
+        # CAN configs
+        self.can_bus = None
+        self.can_src = None
+        self.can_q = None
+
+        self.frucd_dbc = None
+        self.cm200_dbc = None
+
+        # Dashboard values
         self.bms_state = None
         self.vcu_state = None
         self.motor_temp = -1
@@ -28,35 +37,25 @@ class TelemetryManager:
         self.motor_speed = None
         self.torque_feedback = None
 
-        self.can_queue = None
-        self.frucd_dbc = None
-        self.cm200_dbc = None
+    def init_can(self, src, channel):
+        """
+        Initialize CAN bus and logging file
+        """
+        if src not in ('pcan', 'tcan'):
+            raise ValueError(f"Invalid bus '{src}'. Expected 'pcan' or 'tcan'.")
+        self.can_src = src
 
-    def csv_init(self, can_node):
-        """
-        Initialize CSV file
-        """
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         self.start_time = time.time()
-
-        if can_node == 'can0':
-            log_dir = os.path.join(self.root, 'Logs')
-        elif can_node == 'vcan0':
-            log_dir = os.path.join(self.root, 'TestLogs')
-
+        
+        if channel == 'vcan0' or channel == 'vcan1':
+            log_dir = os.path.join(self.root, f'TestLogs/{self.can_src}')
+        elif channel == 'can0' or channel == 'can1':
+            log_dir = os.path.join(self.root, f'Logs/{self.can_src}')
         os.makedirs(log_dir, exist_ok=True)
-        log_path = os.path.join(log_dir, f'{timestamp}.csv')
-        self.csv_file = open(log_path, 'w', newline='')
-        self.csv_writer = csv.DictWriter(
-            self.csv_file,
-            fieldnames=['ID', 'D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'Timestamp']
-        )
+        self.log_path = os.path.join(log_dir, f'{timestamp}.csv')
 
-    def can_init(self, channel):
-        """
-        Initialize CAN interface
-        """
-        self.bus = can.interface.Bus(channel=channel, interface='socketcan')
+        self.can_bus = can.interface.Bus(channel=channel, interface='socketcan')
 
         frucd_dbc_path = os.path.join(self.root, 'FE12.dbc')
         cm200_dbc_path = os.path.join(self.root, '20240129 Gen5 CAN DB.dbc')
@@ -64,22 +63,24 @@ class TelemetryManager:
         self.frucd_dbc = cantools.database.load_file(frucd_dbc_path)
         self.cm200_dbc = cantools.database.load_file(cm200_dbc_path)
 
-        self.can_queue = Queue()
+        self.can_q = Queue()
 
-    def process_can(self):
+    def queue_can(self):
         """
-        Process CAN message
+        Process CAN bus messages and queue for logging
         """
         while True:
-            msg = self.bus.recv()
-            self.can_queue.put(msg)
+            msg = self.can_bus.recv()
+            self.can_q.put(msg)
 
+            if self.can_src == 'tcan':
+                continue
+
+            # Decode PCAN messages
             message = None
-            source_db = None
-            for db in [self.frucd_dbc, self.cm200_dbc]:
+            for dbc in [self.frucd_dbc, self.cm200_dbc]:
                 try:
-                    message = db.get_message_by_frame_id(msg.arbitration_id)
-                    source_db = db
+                    message = dbc.get_message_by_frame_id(msg.arbitration_id)
                     break
                 except KeyError:
                     continue
@@ -88,7 +89,7 @@ class TelemetryManager:
             
             data = message.decode(msg.data)
 
-            if source_db == self.frucd_dbc:
+            if dbc == self.frucd_dbc:
                 match message.name:
                     case 'Dashboard_Vehicle_State':
                         self.vcu_state = data['State']
@@ -115,7 +116,7 @@ class TelemetryManager:
                             self.shutdown = 'SHUTDOWN FINAL'
                         else:
                             self.shutdown = 'NO SHUTDOWN'
-            elif source_db == self.cm200_dbc:
+            elif dbc == self.cm200_dbc:
                 match message.name:
                     case 'M160_Temperature_Set_1':
                         self.mc_temp = (
@@ -145,20 +146,26 @@ class TelemetryManager:
 
     def log_can(self):
         """
-        Log CAN message to CSV
+        Log all data as raw CAN messages to a CSV
         """
-        while True:
-            msg = self.can_queue.get()
-            data_bytes = list(msg.data)
+        csv_file = open(self.log_path, 'w', newline='')
+        csv_writer = csv.DictWriter(
+            csv_file,
+            fieldnames=['ID', 'D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'Timestamp']
+        )
 
-            if len(data_bytes) > 8:
+        while True:
+            msg = self.can_q.get()
+
+            data_raw = list(msg.data)
+            if len(data_raw) > 8:
                 continue
 
             row = {
                 'ID': hex(msg.arbitration_id)[2:].upper(),
-                'Timestamp': int((time.time() - self.start_time) * 1000)
+                'Timestamp': int((msg.timestamp - self.start_time) * 1000)
             }
-            for i in range(len(data_bytes)):
-                row[f'D{i}'] = data_bytes[i]
-            self.csv_writer.writerow(row)
-            self.csv_file.flush()
+            for i in range(len(data_raw)):
+                row[f'D{i}'] = data_raw[i]
+            csv_writer.writerow(row)
+            csv_file.flush()

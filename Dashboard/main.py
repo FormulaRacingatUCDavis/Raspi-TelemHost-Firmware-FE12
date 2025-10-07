@@ -1,28 +1,48 @@
 #!/home/frucd/projects/Raspi-TelemHost-Firmware-FE12/.venv/bin/python
 
 import threading
+import multiprocessing
+import time
 from ui import Dashboard
-from telemetry import TelemetryManager
+from daq import DAQEngine
 
-CAN_NODE = 'can0'
-dashboard = Dashboard('FE12 Dashboard')
+def update_dashboard(daq, stop_event, dashboard):
+    while not stop_event.is_set():
+        dashboard.update_state(daq.vcu_state, daq.bms_state)
+        dashboard.update_temp(daq.motor_temp, daq.mc_temp, daq.pack_temp, daq.soc)
+        dashboard.update_speed(daq.speed_RPM)
+        dashboard.update_glv(daq.glv_voltage)
 
-telem = TelemetryManager()
-telem.csv_init(CAN_NODE)
-telem.can_init(CAN_NODE)
+def process_tcan(stop_event):
+    daq = DAQEngine()
+    daq.init_can('tcan', 'vcan1')
 
-def update_dashboard():
-    while True:
-        dashboard.update_state(telem.vcu_state, telem.bms_state)
-        dashboard.update_temp(telem.motor_temp, telem.mc_temp, telem.pack_temp, telem.soc)
-        dashboard.update_speed(telem.speed_RPM)
-        dashboard.update_glv(telem.glv_voltage)
+    threading.Thread(target=daq.queue_can, daemon=True).start()
+    threading.Thread(target=daq.log_can, daemon=True).start()
+
+    while not stop_event.is_set():
+        time.sleep(0.1)
 
 if __name__ == '__main__':
-    threading.Thread(target=telem.process_can, daemon=True).start()
-    threading.Thread(target=update_dashboard, daemon=True).start()
-    threading.Thread(target=telem.log_can, daemon=True).start()
+    stop_event = multiprocessing.Event()
+    
+    tcan_proc = multiprocessing.Process(target=process_tcan, args=(stop_event,))
+    tcan_proc.start()
+
+    daq = DAQEngine()
+    daq.init_can('pcan', 'vcan0')
+    dashboard = Dashboard('FE12 Dashboard')
+
+    threading.Thread(target=daq.queue_can, daemon=True).start()
+    threading.Thread(target=daq.log_can, daemon=True).start()
+    threading.Thread(target=update_dashboard, daemon=True, args=(daq, stop_event, dashboard)).start()
 
     dashboard.root.attributes('-fullscreen', True)
     dashboard.root.config(cursor="none")
-    dashboard.root.mainloop()
+
+    try:
+        dashboard.root.mainloop()
+    finally:
+        stop_event.set()
+
+    tcan_proc.join()
