@@ -1,9 +1,9 @@
 import tkinter as tk
 
 class Dashboard:
-    def __init__(self, title):
+    def __init__(self):
         self.root = tk.Tk()
-        self.root.title(title)
+        self.root.title('FE12 Dashboard')
         self.root.configure(bg='black')
         self.root.bind('<Escape>', lambda event: self.root.destroy())
 

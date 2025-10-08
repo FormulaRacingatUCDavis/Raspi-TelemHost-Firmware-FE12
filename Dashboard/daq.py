@@ -5,6 +5,7 @@ import time
 from queue import Queue
 from datetime import datetime
 import csv
+import config
 
 class DAQEngine:
     def __init__(self):
@@ -37,7 +38,7 @@ class DAQEngine:
         self.motor_speed = None
         self.torque_feedback = None
 
-    def init_can(self, src, channel):
+    def init_can(self, src):
         """
         Initialize CAN bus and logging file
         """
@@ -47,6 +48,13 @@ class DAQEngine:
 
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         self.start_time = time.time()
+
+        if self.can_src == 'tcan':
+            channel = config.tcan['channel']
+            interface = config.tcan['interface']
+        if self.can_src == 'pcan':
+            channel = config.pcan['channel']
+            interface = config.pcan['interface']
         
         if channel == 'vcan0' or channel == 'vcan1':
             log_dir = os.path.join(self.root, f'TestLogs/{self.can_src}')
@@ -55,7 +63,7 @@ class DAQEngine:
         os.makedirs(log_dir, exist_ok=True)
         self.log_path = os.path.join(log_dir, f'{timestamp}.csv')
 
-        self.can_bus = can.interface.Bus(channel=channel, interface='socketcan')
+        self.can_bus = can.interface.Bus(channel=channel, interface=interface)
 
         frucd_dbc_path = os.path.join(self.root, 'FE12.dbc')
         cm200_dbc_path = os.path.join(self.root, '20240129 Gen5 CAN DB.dbc')

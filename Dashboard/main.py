@@ -15,7 +15,7 @@ def update_dashboard(daq, stop_event, dashboard):
 
 def process_tcan(stop_event):
     daq = DAQEngine()
-    daq.init_can('tcan', 'vcan1')
+    daq.init_can('tcan')
 
     threading.Thread(target=daq.queue_can, daemon=True).start()
     threading.Thread(target=daq.log_can, daemon=True).start()
@@ -30,8 +30,8 @@ if __name__ == '__main__':
     tcan_proc.start()
 
     daq = DAQEngine()
-    daq.init_can('pcan', 'vcan0')
-    dashboard = Dashboard('FE12 Dashboard')
+    daq.init_can('pcan')
+    dashboard = Dashboard()
 
     threading.Thread(target=daq.queue_can, daemon=True).start()
     threading.Thread(target=daq.log_can, daemon=True).start()
