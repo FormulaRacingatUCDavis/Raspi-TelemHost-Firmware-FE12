@@ -5,6 +5,7 @@ import multiprocessing
 import time
 from ui import Dashboard
 from daq import DAQEngine
+import platform
 
 def update_dashboard(daq, stop_event, dashboard):
     while not stop_event.is_set():
@@ -37,7 +38,11 @@ if __name__ == '__main__':
     threading.Thread(target=daq.log_can, daemon=True).start()
     threading.Thread(target=update_dashboard, daemon=True, args=(daq, stop_event, dashboard)).start()
 
-    dashboard.root.attributes('-fullscreen', True)
+    if platform.system() == 'Linux':
+        dashboard.root.attributes('-fullscreen', True)
+    else:
+        dashboard.root.state('zoomed')
+        
     dashboard.root.config(cursor="none")
 
     try:
