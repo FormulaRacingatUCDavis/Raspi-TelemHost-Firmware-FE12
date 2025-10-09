@@ -11,7 +11,7 @@ def update_dashboard(daq, stop_event, dashboard):
     while not stop_event.is_set():
         dashboard.update_state(daq.vcu_state, daq.bms_state)
         dashboard.update_temp(daq.motor_temp, daq.mc_temp, daq.pack_temp, daq.soc)
-        dashboard.update_speed(daq.speed_RPM)
+        dashboard.update_speed(daq.motor_speed)
         dashboard.update_glv(daq.glv_voltage)
 
 def process_tcan(stop_event):

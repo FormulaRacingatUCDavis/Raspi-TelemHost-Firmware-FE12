@@ -13,7 +13,7 @@ class Dashboard:
         self.motor_temp = -1
         self.mc_temp = -1
         self.pack_temp = -1
-        self.speed_RPM = None
+        self.motor_speed = None
         self.glv_voltage = None
         self.soc = None
 
@@ -37,13 +37,13 @@ class Dashboard:
         header_font_size = 20
 
         # Speed
-        header_speed = tk.Label(self.main_frame, text=f'MPH', font=('Trebuchet MS', header_font_size, 'bold'), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
+        header_speed = tk.Label(self.main_frame, text=f'MOTOR RPM', font=('Trebuchet MS', header_font_size, 'bold'), bg='black', fg='yellow', anchor='s', padx=5, pady=5)
         header_speed.grid(row=0, column=0, sticky='nsew', padx=(padx_out, 0))
         self.lbl_speed = tk.Label(self.main_frame, font=('Trebuchet MS', 75, 'bold'), fg='black', anchor='center', padx=5, pady=5)
         self.lbl_speed.grid(row=1, column=0, sticky='nsew', rowspan=2, padx=(padx_out, 0))
 
         # Vehicle state
-        header_state = tk.Label(self.main_frame, text=f'STATE:', font=('Trebuchet MS', header_font_size, 'bold'), bg='black', fg='yellow', anchor='w', pady=5)
+        header_state = tk.Label(self.main_frame, text=f'STATE', font=('Trebuchet MS', header_font_size, 'bold'), bg='black', fg='yellow', anchor='s', pady=5)
         header_state.grid(row=3, column=0, sticky='nsew', padx=(padx_out, 0))
         self.lbl_state = tk.Label(self.main_frame, text='STARTUP', font=('Trebuchet MS', 30, 'bold'), fg='black', anchor='center', padx=5, pady=5)
         self.lbl_state.grid(row=4, column=0, sticky='nsew', padx=(padx_out, 0))
@@ -160,15 +160,12 @@ class Dashboard:
 
         self.lbl_temp.config(text=f'{round(max_temp)}C', bg=color)
 
-    def update_speed(self, speed_RPM):
-        if speed_RPM == self.speed_RPM:
+    def update_speed(self, motor_speed):
+        if motor_speed == self.motor_speed:
             return
-        self.speed_RPM = speed_RPM
+        self.motor_speed = motor_speed
 
-        circum = 50.2655 # Radius = 8 in
-        speed_MPH = self.speed_RPM * circum * 60 / 63360
-
-        self.lbl_speed.config(text=str(round(speed_MPH)), bg='dodger blue')
+        self.lbl_speed.config(text=str(motor_speed), bg='dodger blue')
 
     def update_glv(self, glv_voltage):
         if glv_voltage == self.glv_voltage:

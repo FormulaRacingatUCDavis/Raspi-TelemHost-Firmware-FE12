@@ -36,7 +36,6 @@ class DAQEngine:
         self.throttle2 = None
         self.mc_state = None
         self.motor_speed = None
-        self.torque_feedback = None
 
     def init_can(self, src):
         """
@@ -145,12 +144,6 @@ class DAQEngine:
                             self.mc_state = None
                     case 'M165_Motor_Position_Info':
                         self.motor_speed = data['INV_Motor_Speed']
-                        if self.torque_feedback is not None:
-                            self.test = self.motor_speed * self.torque_feedback
-                    case 'M172_Torque_And_Timer_Info':
-                        self.torque_feedback = data['INV_Torque_Feedback']
-                        if self.motor_speed is not None:
-                            self.test = self.motor_speed * self.torque_feedback
 
     def log_can(self):
         """
