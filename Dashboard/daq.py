@@ -28,15 +28,13 @@ class DAQEngine:
         self.motor_temp = -1
         self.mc_temp = -1
         self.pack_temp = -1
-        self.speed_RPM = None
         self.glv_voltage = None
         self.soc = None
         self.shutdown = None
         self.test = None
         self.throttle2 = None
         self.mc_state = None
-        self.motor_speed = None
-        self.torque_feedback = None
+        self.speed_MPH = None
 
     def init_can(self, src):
         """
@@ -107,8 +105,6 @@ class DAQEngine:
                     case 'PEI_Diagnostic_BMS_Data':
                         self.pack_temp = data['HI_Temp']
                         self.soc = data['SOC']
-                    case 'Dashboard_Random_Shit':
-                        self.speed_RPM = data['Front_Wheel_Speed']
                     case 'PEI_Status':
                         if data['PRECHARGE'] == 0:
                             self.shutdown = 'PRECHARGE'
@@ -144,13 +140,7 @@ class DAQEngine:
                         else:
                             self.mc_state = None
                     case 'M165_Motor_Position_Info':
-                        self.motor_speed = data['INV_Motor_Speed']
-                        if self.torque_feedback is not None:
-                            self.test = self.motor_speed * self.torque_feedback
-                    case 'M172_Torque_And_Timer_Info':
-                        self.torque_feedback = data['INV_Torque_Feedback']
-                        if self.motor_speed is not None:
-                            self.test = self.motor_speed * self.torque_feedback
+                        self.speed_MPH = abs(data['INV_Motor_Speed']) * 0.016349 # = rpm * (60 * pi * Tire Diameter) / (Final Drive Ratio * 63360)
 
     def log_can(self):
         """
@@ -162,6 +152,7 @@ class DAQEngine:
             fieldnames=['ID', 'D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'Timestamp']
         )
 
+        count = 0
         while True:
             msg = self.can_q.get()
 
@@ -176,4 +167,8 @@ class DAQEngine:
             for i in range(len(data_raw)):
                 row[f'D{i}'] = data_raw[i]
             csv_writer.writerow(row)
-            csv_file.flush()
+            count += 1
+
+            if count == 500:
+                csv_file.flush()
+                count = 0
