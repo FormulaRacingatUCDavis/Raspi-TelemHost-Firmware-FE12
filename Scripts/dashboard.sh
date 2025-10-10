@@ -20,9 +20,11 @@ sudo ip link set up vcan1
 # Set up CAN channels
 sudo ip link set can0 up type can bitrate 500000
 sudo ip link set can1 up type can bitrate 500000
+sudo ifconfig can0 txqueuelen 65536
+sudo ifconfig can1 txqueuelen 65536
 
 # Run dashboard if display available, else fallback
-cd /home/frucd/Projects/Raspi-TelemHost-Firmware-FE12/
+cd /home/frucd/projects/Raspi-TelemHost-Firmware-FE12/
 source .venv/bin/activate
 
 if [ -S /tmp/.X11-unix/X0 ]; then

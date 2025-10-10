@@ -68,7 +68,6 @@ class Dashboard:
         self.lbl_temp.grid(row=2, column=2, sticky='nsew', padx=(0, padx_out))
 
         # Initial state
-        self.mode = 'drive'
         self.current_frame = self.main_frame
         self.previous_frame = None
         self.current_frame.pack(fill='both', expand=True)

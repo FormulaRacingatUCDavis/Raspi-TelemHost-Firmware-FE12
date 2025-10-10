@@ -13,7 +13,7 @@ def update_dashboard(daq, stop_event, dashboard):
         dashboard.update_temp(daq.motor_temp, daq.mc_temp, daq.pack_temp, daq.soc)
         dashboard.update_speed(daq.speed_MPH)
         dashboard.update_glv(daq.glv_voltage)
-
+        
 def process_tcan(stop_event):
     daq = DAQEngine()
     daq.init_can('tcan')
