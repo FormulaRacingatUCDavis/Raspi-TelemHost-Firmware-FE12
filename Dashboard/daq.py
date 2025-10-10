@@ -35,7 +35,7 @@ class DAQEngine:
         self.throttle2 = None
         self.mc_state = None
         self.speed_MPH = None
-
+        
     def init_can(self, src):
         """
         Initialize CAN bus and logging file
