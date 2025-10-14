@@ -1,4 +1,4 @@
-#!/home/frucd/projects/Raspi-TelemHost-Firmware-FE12/.venv/bin/python
+#!/home/frucd/projects/Raspi-TelemHost-Firmware/.venv/bin/python
 
 import threading
 import multiprocessing

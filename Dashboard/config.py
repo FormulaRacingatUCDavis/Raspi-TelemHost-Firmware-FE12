@@ -2,11 +2,11 @@ import platform
 
 if platform.system() == 'Linux':
     tcan = dict(
-        channel = 'can1',
+        channel = 'vcan1',
         interface = 'socketcan'
     )
     pcan = dict(
-        channel = 'can0',
+        channel = 'vcan0',
         interface = 'socketcan'
     )
 else:
